@@ -2,7 +2,7 @@
 
 An R Package to visualize bivariate relationships with a quantile plot.
 
-Install this package with the command `devtools::install_github("ilundberg/quantileplot")`.
+Install this package with the command `devtools::install_github("ilundberg/quantileplot")`. Then see the [vignette](https://ilundberg.github.io/quantileplot/doc/quantileplot.html) to get started.
 
 **Warning:** This package is actively being developed. Functionality is likely to change in the near future. You should think of it as a directory of code that exists on Github. If you use any of this code (or the package as a whole), you should store a copy of the version you are using so that you can reproduce your results. The package as available here on Github will change. This warning will be updated when the package is stable.
 

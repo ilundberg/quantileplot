@@ -1,26 +1,11 @@
-# How to use quantileplot function
+An R Package to visualize bivariate relationships with a quantile plot.
 
-## Download and install quantileplot package
+Install this package with the command `devtools::install_github("ilundberg/quantileplot")`.
 
-Method 1: `devtools::install_github()`
-Because this is still in a private repo, you will run 
-
-`install_github("robincrlee/quantileplot", auth_token = STRING)`
-auth_token string can be created by following this instruction. 
-https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token 
-
-Method 2: 
-1. git clone this repo
-2. Navigate to `tutorial_package` subdirectory in R or command line
-3. `devtools::install()` in R or `R CMD build brocolors`
-
+**Warning:** This package is actively being developed. Functionality is likely to change in the near future. You should think of it as a directory of code that exists on Github. If you use any of this code (or the package as a whole), you should store a copy of the version you are using so that you can reproduce your results. The package as available here on Github will change. This warning will be updated when the package is stable.
 
 ## Sample Use
-- Use quantileplot function
-
-`quantileplot(data, x, y)`
-
-This function accepts three argument, a dataframe, x column and y column. 
+`quantileplot(y ~ s(x), data)`
 
 ```
 x <- rbeta(1000,1,2)

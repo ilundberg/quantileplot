@@ -1,0 +1,147 @@
+---
+title: "quantileplot"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{quantileplot}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dpi = 300, 
+  fig.width = 6.5, 
+  fig.height = 4, 
+  out.width = "650px"
+)
+```
+
+The `quantileplot` package visualizes bivariate associations. When summarizing bivariate data, a best-fit regression line often obscures important trends---it is too simple. A scatter plot shows all the data but overwhelms the viewer---it is too complicated. A `quantileplot` is a middle ground with three components.
+
+1. The marginal density of the predictor variable.
+2. The conditional density of the outcome at selected values of the predictor.
+3. Smooth curves for conditional quantiles of the outcome as functions of the predictor.
+
+A `quantileplot` may be useful in many settings. One example is when
+
+* the predictor is skewed, so that (1) conveys useful information, 
+* the outcome is skewed, so that (2) conveys useful information, and
+* the outcome is heteroskedastic, so that (3) conveys a set oof distinct trends.
+
+This vignette illustrates the package functionality with a simulated example.
+
+# Basic functionality
+
+Suppose we have a continuous predictor $X$ and a continuous outcome $Y$. 
+
+```{r}
+library(quantileplot)
+x <- rbeta(1000,1,2)
+y <- log(1 + 9 * x) * rbeta(1000, 1, 2)
+sim_data <- data.frame(x = x, y = y)
+```
+
+A call to the `quantileplot` function, produces the most basic quantile plot.
+```{r, results = F}
+quantileplot(y ~ s(x), data = sim_data)
+```
+
+A call to `quantileplot` may take some time to compute. In the simulated setting above, the time was 4 seconds for 1,000 observations and 24 seconds for 10,000 observations.
+
+# Visualizing uncertainty
+
+This most basic version of the visualization does not present any estimates of uncertainty. There are two options for visualizing uncertainty.
+
+## Uncertainty method 1: Pointwise confidence bands
+
+The argument `show_ci = T` will layer 95\% pointwise credible interval bands on top of the estimated quantile curves. A credible interval is the Bayesian analog to a confidence interval, here supported by the default variance estimation methods in the `qgam` package.
+
+```{r, results = F}
+quantileplot(y ~ s(x), data = sim_data, show_ci = T)
+```
+
+Importantly, these are **pointwise** credible intervals. At each predictor value $X = x$, they are designed to contain the middle 95\% of the posterior distribution of the quantile of $Y$ given $X = x$. This is distinct from uncertainty statements about the entire curve. For example, it would be incorrect to conclude that over 95\% of repeated draws the entire curve would fall within the plotted band.
+
+The `ci` argument allows the user to specify a credible value other than 0.95 (e.g. for 90\% confidence bands.)
+
+## Uncertainty method 2: Posterior samples of curves
+
+One may want to visualize uncertainty by simulating a series of hypothetical curves. The argument `uncertainty_draws = T` will add a panel of plots below the main plot. In each plot, the solid black line depicts the point estimate of the curve. The gray lines depict curves sampled from the posterior distribution.
+
+```{r, results = F, fig.height = 5}
+quantileplot(y ~ s(x), data = sim_data, uncertainty_draws = T)
+```
+
+Importantly, these curves are not like a confidence interval. They do not show the user a range such that the truth would fall in that range with some probability. Instead, they are useful to convey to the viewer the more basic idea that the estimated curve is only our best guess for a curve that is statistically uncertain.
+
+# Customizing the visualization
+
+There are two ways to customize the plot: with arguments and by manually modifying the resulting `ggplot2` object.
+
+## Customization 1: Arguments to `quantileplot`
+
+You can customize many features of the plot with arguments to the `quantileplot` function.
+
+```{r, results = F}
+quantileplot(
+  y ~ s(x), 
+  data = sim_data, 
+  # Provide axis titles
+  xlab = "A name for the predictor", 
+  ylab = "A name for the outcome",
+  # Customize the number of vertical slices
+  slice_n = 3,
+  # Customize which quantiles are depicted
+  quantiles = c(.3,.5,.7),
+  # Denote quantiles by colors with a legend instead of by labels
+  quantile_notation = "legend"
+)
+```
+
+If predictors are extremely skewed, you may only want to visualize part of the space. For example, the code below restricts the visualization to the region of $X\in(0,.5)$ and $Y\in (0,1)$.
+```{r, results = F}
+quantileplot(y ~ s(x), 
+             data = sim_data,
+             quantile_notation = "legend",
+             x_range = c(0,.5),
+             y_range = c(0,1),
+             show_ci = T)
+```
+
+Note that the vertical densities are redistributed across the user-specified `x_range`. Also note that when restricting the range of the visualization, you may need `quantile_notation = "legend"` because the annotations that appear by default at the ends of the quantile curves (e.g. 75th percentile) may now fall outside the range of the plot.
+
+## Customization 2: Make modifications as in `ggplot2`
+
+Because the basic `quantileplot` contains a `ggplot2` object in the `plot` element, you can modify the output by providing plotting layers. For instance, you can add a custom title, change colors, modify axes, etc.
+
+```{r, results = F}
+library(ggplot2)
+my_plot <- quantileplot(y ~ s(x), data = sim_data, quantile_notation = "legend")
+my_plot$plot +
+  ggtitle("A custom title for the plot") +
+  theme_light() +
+  scale_color_manual(values = rainbow(5),
+                     guide = guide_legend(reverse = TRUE, label.position = "left",
+                                          title = "Custom\nlegend\ntitle and\ncolors")) +
+  xlab(expression(Custom~axis~title~could~have~something~bold(bold))) +
+  scale_y_continuous(breaks = c(0,1,2),
+                     name = "Custom y-axis\nbreaks and\nrotated title") +
+  theme(axis.title.y = element_text(angle = 0, vjust = .5))
+```
+
+## Additional notes
+
+In some settings, estimation of quantile curves is computationally intensive. If you are modifying some aspect of the densities and want to use a cache from a previous call for the quantile curves, you can use the \code{previous_fit} argument.
+
+```{r, results = "hide"}
+quantileplot(y ~ s(x), data = sim_data, previous_fit = my_plot)
+```
+
+You can also pass other arguments to \code{mqgam} through the \code{...} at the end of the function call. For instance, you can specify rather than learn the log learning rate as discussed in the \code{mqgam} documentation. Note how these two plots have very different wiggliness of the estimated quantile curves.
+
+```{r, results = F}
+quantileplot(y ~ s(x), data = sim_data, lsig = log(10))
+quantileplot(y ~ s(x), data = sim_data, lsig = log(.01))
+```

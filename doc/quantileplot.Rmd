@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 This R package has a companion working paper.
 
->Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. ``Smooth quantile visualizations enhance understanding of bivariate population distributions.'' Working paper.
+>Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. ["Smooth quantile visualizations enhance understanding of bivariate population distributions."](https://ilundberg.github.io/quantileplot/doc/explainer.html) Working paper.
 
 The `quantileplot` package visualizes bivariate associations. When summarizing bivariate data, a best-fit regression line often obscures important trends---it is too simple. A scatter plot shows all the data but overwhelms the viewer---it is too complicated. A `quantileplot` is a middle ground with three components.
 

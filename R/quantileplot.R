@@ -47,12 +47,6 @@
 #'
 #' @export
 #' @import dplyr
-#' @import ggplot2
-#' @import rlang
-#' @importFrom ggthemes scale_color_colorblind
-#' @importFrom gridExtra grid.arrange
-#' @importFrom stats density
-#' @importFrom labeling extended
 #'
 #' @examples
 #' x <- rbeta(1000,1,2)
@@ -225,7 +219,7 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
   x <- y <- estimate <- curve <- percentile <- percentile_num <-
     ci.max <- ci.min <- index <- num <- ymax <- ymin <- weight <-
     variable <- x_position <- y_position <- angle <- vjust <-
-    label <- label_no_pct <- NULL
+    label <- label_no_pct <- density <- NULL
   if (!is.null(previous_fit)) {
     if (!all(dim(previous_fit$arguments$data) == dim(data))) {
       stop("Argument error: The supplied data argument is of a different size from the data in the supplied previous_fit")
@@ -477,10 +471,10 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
   # If confidence bands were requested, then add them
   if (show_ci) {
     p <- p +
-      geom_ribbon(data = curves_point,
-                  ggplot2::aes(x = x, ymin = ci.min, ymax = ci.max,
-                               group = percentile),
-                  fill = "gray", alpha = .4)
+      ggplot2::geom_ribbon(data = curves_point,
+                           ggplot2::aes(x = x, ymin = ci.min, ymax = ci.max,
+                                        group = percentile),
+                           fill = "gray", alpha = .4)
   }
 
   # If labels on the lines are requested, then use those instead of colors

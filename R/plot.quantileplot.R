@@ -24,7 +24,7 @@ plot.quantileplot <- function(x, bottom_xlab_angle = NULL, bottom_height = .3, .
     if (!is.null(bottom_xlab_angle)) {
       for (i in 1:length(all_plots)) {
         all_plots[[i]] <- all_plots[[i]] +
-          theme(axis.text.x = element_text(angle = bottom_xlab_angle, hjust = 1))
+          ggplot2::theme(axis.text.x = ggplot2::element_text(angle = bottom_xlab_angle, hjust = 1))
       }
     }
     all_plots$point <- x$plot

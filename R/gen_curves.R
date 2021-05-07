@@ -17,13 +17,6 @@
 #'
 #' @export
 #' @import dplyr
-#' @import ggplot2
-#' @import rlang
-#' @importFrom reshape2 melt
-#' @importFrom stats predict qnorm
-#' @importFrom qgam mqgam
-#' @importFrom mgcv PredictMat
-#' @importFrom mvtnorm rmvnorm
 gen_curves <- function(formula,
                        second_formula,
                        data,

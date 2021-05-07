@@ -18,7 +18,6 @@
 #'
 #' @export
 #' @import dplyr
-#' @importFrom stats density dnorm weighted.mean
 gen_densities <- function(data, slice_n = 7, x_range = NULL, y_range = NULL, x_bw = NULL, y_bw = NULL, granularity = 512) {
   if (!all(c("x","y","weight") %in% colnames(data))) {
     stop("The data object passed to gen_densities must have these columns: x, y, weight")
@@ -66,8 +65,8 @@ gen_densities <- function(data, slice_n = 7, x_range = NULL, y_range = NULL, x_b
   for (i in 1:granularity) {
     x_eval <- marginal_x_seq[i]
     contribution_each_observation <- 1 / x_bw * stats::dnorm((x_eval - data$x) / x_bw)
-    estimate <- weighted.mean(contribution_each_observation,
-                              w = data$weight)
+    estimate <- stats::weighted.mean(contribution_each_observation,
+                                     w = data$weight)
     # Place those in the marignal_density data frame
     marginal_density$x[i] <- x_eval
     marginal_density$density[i] <- estimate
@@ -86,7 +85,6 @@ gen_densities <- function(data, slice_n = 7, x_range = NULL, y_range = NULL, x_b
     m_each <- 1 / x_bw * stats::dnorm((x_eval - data$x) / x_bw)
     # Average those to produce the marginal density estimate at (x_eval)
     # Do the weighted mean manually to reduce risk of underflow problems in large samples.
-    #m <- stats::weighted.mean(m_each, w = data$weight)
     m <- sum(m_each * data$weight) / sum(data$weight)
 
     # Estimate contribution of each data point to the conditional density at (x_eval,y_eval)

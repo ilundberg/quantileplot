@@ -18,6 +18,10 @@ knitr::opts_chunk$set(
 )
 ```
 
+The `quantileplot` package is available via GitHub: first install the `devtools` package and then type `devtools::install_github("ilundberg/quantileplot")`. There is a companion working paper.
+
+>Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. ``Smooth quantile visualizations enhance understanding of bivariate population distributions.'' Working paper.
+
 The `quantileplot` package visualizes bivariate associations. When summarizing bivariate data, a best-fit regression line often obscures important trends---it is too simple. A scatter plot shows all the data but overwhelms the viewer---it is too complicated. A `quantileplot` is a middle ground with three components.
 
 1. The marginal density of the predictor variable.
@@ -68,10 +72,10 @@ The `ci` argument allows the user to specify a credible value other than 0.95 (e
 
 ## Uncertainty method 2: Posterior samples of curves
 
-One may want to visualize uncertainty by simulating a series of hypothetical curves. The argument `uncertainty_draws = T` will add a panel of plots below the main plot. In each plot, the solid black line depicts the point estimate of the curve. The gray lines depict curves sampled from the posterior distribution.
+One may want to visualize uncertainty by simulating a series of hypothetical curves. The argument `uncertainty_draws = 10` will add a panel of plots below the main plot. In each plot, the 10 solid black line depicts the point estimate of the curve. The gray lines depict curves sampled from the posterior distribution.
 
 ```{r, results = F, fig.height = 5}
-quantileplot(y ~ s(x), data = sim_data, uncertainty_draws = T)
+quantileplot(y ~ s(x), data = sim_data, uncertainty_draws = 10)
 ```
 
 Importantly, these curves are not like a confidence interval. They do not show the user a range such that the truth would fall in that range with some probability. Instead, they are useful to convey to the viewer the more basic idea that the estimated curve is only our best guess for a curve that is statistically uncertain.

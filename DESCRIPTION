@@ -7,20 +7,20 @@ Author: Robin C. Lee, Ian Lundberg, Brandon M. Stewart
 Maintainer: Robin C. Lee <robinlee@princeton.edu>
 RoxygenNote: 7.1.1
 Imports:
-    dplyr,
-    foreach,
-    ggplot2,
+    dplyr (>= 1.0.6),
+    foreach (>= 1.5.1),
+    ggplot2 (>= 3.3.3),
     rlang,
-    ggthemes,
-    qgam,
-    MASS,
-    labeling,
-    stats,
-    gridExtra,
-    mgcv,
-    mvtnorm,
-    reshape2,
-    tidyr
+    ggthemes (>= 4.2.4),
+    qgam (>= 1.3.3),
+    MASS (>= 7.3-54),
+    labeling (>= 0.4.2),
+    stats (>= 4.0.5),
+    gridExtra (>= 2.3),
+    mgcv (>= 1.8-35),
+    mvtnorm (>= 1.1-1),
+    reshape2 (>= 1.4.4),
+    tidyr (>= 1.1.3)
 License: MIT + file LICENSE
 Encoding: UTF-8
 Suggests: 

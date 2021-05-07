@@ -21,7 +21,7 @@ quantileplot(y ~ s(x), data = sim_data)
 quantileplot(y ~ s(x), data = sim_data, show_ci = T)
 
 ## ---- results = F, fig.height = 5---------------------------------------------
-quantileplot(y ~ s(x), data = sim_data, uncertainty_draws = T)
+quantileplot(y ~ s(x), data = sim_data, uncertainty_draws = 10)
 
 ## ---- results = F-------------------------------------------------------------
 quantileplot(

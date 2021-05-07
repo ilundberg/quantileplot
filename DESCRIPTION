@@ -10,7 +10,6 @@ Imports:
     dplyr (>= 1.0.6),
     foreach (>= 1.5.1),
     ggplot2 (>= 3.3.3),
-    rlang,
     ggthemes (>= 4.2.4),
     qgam (>= 1.3.3),
     MASS (>= 7.3-54),

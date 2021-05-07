@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-The `quantileplot` package is available via GitHub: first install the `devtools` package and then type `devtools::install_github("ilundberg/quantileplot")`. There is a companion working paper.
+This R package has a companion working paper.
 
 >Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. ``Smooth quantile visualizations enhance understanding of bivariate population distributions.'' Working paper.
 
@@ -35,6 +35,13 @@ A `quantileplot` may be useful in many settings. One example is when
 * the outcome is heteroskedastic, so that (3) conveys a set oof distinct trends.
 
 This vignette illustrates the package functionality with a simulated example.
+
+# Installation
+
+The `quantileplot` package is available via GitHub.
+
+* First, install the `devtools` package
+* Then, type `devtools::install_github("ilundberg/quantileplot")`
 
 # Basic functionality
 

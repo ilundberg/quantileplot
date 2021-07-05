@@ -35,6 +35,23 @@ gen_curves <- function(formula,
   # See if any smooth terms used in the formula
   contains_smooth_terms <- any(grepl("s[(]",as.character(formula)))
 
+  # Extract any transformations on the y variable
+  outcome_with_transformation <- as.character(formula)[2]
+  outcome_variable <- all.vars(formula)[1]
+  # Determine the inverse of the transformation on the y-variable.
+  # We will use this to return estimated curves to the untransformed y-scale.
+  if (outcome_with_transformation == outcome_variable) {
+    inverse_transformation <- identity
+  } else if (outcome_with_transformation == paste0("log(",outcome_variable,")")) {
+    inverse_transformation <- exp
+  } else if (outcome_with_transformation == paste0("exp(",outcome_variable,")")) {
+    inverse_transformation <- log
+  } else if (outcome_with_transformation == paste0("sqrt(",outcome_variable,")")) {
+    inverse_transformation <- function(x) x ^ 2
+  } else {
+    stop(paste("Your model formula uses a transformation",outcome_with_transformation,"which is not supported."))
+  }
+
   # Estimate the smooth quantile curves
   if (is.null(weights) & contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(list(formula, second_formula),
@@ -89,20 +106,21 @@ gen_curves <- function(formula,
     # Create a data frame of the point estimate
     point_df <- data.frame(curve = "point",
                            x = to_predict[[1]],
-                           estimate = yhat_point,
-                           se = yhat_se)
+                           estimate = inverse_transformation(yhat_point),
+                           ci.min = inverse_transformation(yhat_point - stats::qnorm((1 + ci) / 2) * yhat_se),
+                           ci.max = inverse_transformation(yhat_point + stats::qnorm((1 + ci) / 2) * yhat_se))
 
     # Calculate uncertainty_draws simulated curves
     if (!is.null(uncertainty_draws)) {
       beta_star <- t(mvtnorm::rmvnorm(uncertainty_draws, mean = beta, sigma = Sigma))
-      yhat_star <- X_basis_expansion %*% beta_star
+      yhat_star <- inverse_transformation(X_basis_expansion %*% beta_star)
       # Create a data frame of the simulated curves
       sim_curves_df <- data.frame(yhat_star) %>%
         dplyr::rename_all(.funs = function(x) gsub("X","sim",x)) %>%
         dplyr::mutate(x = to_predict[[1]]) %>%
         reshape2::melt(id = "x", variable.name = "curve", value.name = "estimate") %>%
-        dplyr::mutate(se = NA) %>%
-        dplyr::select(curve, x, estimate, se)
+        dplyr::select(curve, x, estimate) %>%
+        mutate(ci.min = NA, ci.max = NA)
     }
     to_return <- point_df
     if (!is.null(uncertainty_draws)) {
@@ -110,9 +128,7 @@ gen_curves <- function(formula,
         dplyr::bind_rows(sim_curves_df)
     }
     to_return <- to_return %>%
-      dplyr::mutate(ci.min = estimate - stats::qnorm((1 + ci) / 2) * se,
-                    ci.max = estimate + stats::qnorm((1 + ci) / 2) * se,
-                    Form = "Smooth",
+      dplyr::mutate(Form = "Smooth",
                     Summary = "quantiles",
                     percentile = paste0(100 * q,"th"),
                     percentile_num = 100 * q)
@@ -125,3 +141,4 @@ gen_curves <- function(formula,
   return(list(curves = quantile_curves_df,
               mqgam.out = mqgam.out))
 }
+

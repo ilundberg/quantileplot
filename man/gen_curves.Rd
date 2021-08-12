@@ -13,6 +13,7 @@ gen_curves(
   show_ci = FALSE,
   ci = 0.95,
   uncertainty_draws = 10,
+  inverse_transformation = NULL,
   ...
 )
 }
@@ -32,6 +33,8 @@ gen_curves(
 \item{ci}{Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.}
 
 \item{uncertainty_draws}{Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.}
+
+\item{inverse_transformation}{A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.}
 
 \item{...}{Other arguments passed to \code{mqgam} for fitting of smooth quantile curves.}
 }

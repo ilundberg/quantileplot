@@ -9,6 +9,7 @@
 #' @param show_ci Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.
 #' @param ci Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.
 #' @param uncertainty_draws Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.
+#' @param inverse_transformation A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.
 #' @param ... Other arguments passed to \code{mqgam} for fitting of smooth quantile curves.
 #' @return A list of length 2. Element \code{curves} is a data frame containing the data for plotting smooth curves for quantiles of the outcome given the predictor. Element \code{mqgam.out} is the fitted object from \code{mqgam}.
 #' @references Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. 2021. "Smooth quantile visualizations enhance understanding of bivariate population distributions." Working paper.
@@ -25,6 +26,7 @@ gen_curves <- function(formula,
                        show_ci = FALSE,
                        ci = 0.95,
                        uncertainty_draws = 10,
+                       inverse_transformation = NULL,
                        ...) {
   # Initialize objects that will be called by non-standard evaluation.
   i <- curve <- x <- estimate <- se <- NULL
@@ -40,16 +42,18 @@ gen_curves <- function(formula,
   outcome_variable <- all.vars(formula)[1]
   # Determine the inverse of the transformation on the y-variable.
   # We will use this to return estimated curves to the untransformed y-scale.
-  if (outcome_with_transformation == outcome_variable) {
-    inverse_transformation <- identity
-  } else if (outcome_with_transformation == paste0("log(",outcome_variable,")")) {
-    inverse_transformation <- exp
-  } else if (outcome_with_transformation == paste0("exp(",outcome_variable,")")) {
-    inverse_transformation <- log
-  } else if (outcome_with_transformation == paste0("sqrt(",outcome_variable,")")) {
-    inverse_transformation <- function(x) x ^ 2
-  } else {
-    stop(paste("Your model formula uses a transformation",outcome_with_transformation,"which is not supported."))
+  if (is.null(inverse_transformation)) {
+    if (outcome_with_transformation == outcome_variable) {
+      inverse_transformation <- identity
+    } else if (outcome_with_transformation == paste0("log(",outcome_variable,")")) {
+      inverse_transformation <- exp
+    } else if (outcome_with_transformation == paste0("exp(",outcome_variable,")")) {
+      inverse_transformation <- log
+    } else if (outcome_with_transformation == paste0("sqrt(",outcome_variable,")")) {
+      inverse_transformation <- function(x) x ^ 2
+    } else {
+      stop(paste("Your model formula uses a transformation",outcome_with_transformation,". This transformation will be used for fitting quantile curves, but you need to provide the inverse_transformation argument so that we can return the plot on the original scale."))
+    }
   }
 
   # Estimate the smooth quantile curves

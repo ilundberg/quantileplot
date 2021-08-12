@@ -24,6 +24,7 @@ quantileplot(
   y_range = NULL,
   x_bw = NULL,
   y_bw = NULL,
+  inverse_transformation = NULL,
   granularity = 512,
   previous_fit = NULL,
   ...
@@ -67,6 +68,8 @@ quantileplot(
 \item{x_bw}{Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.}
 
 \item{y_bw}{Numeric bandwidth for density estimation in the \code{y} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.}
+
+\item{inverse_transformation}{A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.}
 
 \item{granularity}{Integer number of points at which to evaluate each density. Defaults to 512, as in \code{stats::density()}. Higher values yield more granular density estimates.}
 

@@ -27,6 +27,7 @@ gen_curves <- function(formula,
                        ci = 0.95,
                        uncertainty_draws = 10,
                        inverse_transformation = NULL,
+                       argGam = NULL,
                        ...) {
   # Initialize objects that will be called by non-standard evaluation.
   i <- curve <- x <- estimate <- se <- NULL
@@ -60,20 +61,22 @@ gen_curves <- function(formula,
   if (is.null(weights) & contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(list(formula, second_formula),
                              data = data, qu = quantiles,
+                             argGam = argGam,
                              ...)
   } else if (!is.null(weights) & contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(list(formula, second_formula),
                              data = data, qu = quantiles,
-                             argGam = list(weights = data[[weights]]),
+                             argGam = c(argGam, list(weights = data[[weights]])),
                              ...)
   } else if (is.null(weights) & !contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(formula,
                              data = data, qu = quantiles,
+                             argGam = argGam,
                              ...)
   } else if (!is.null(weights) & !contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(formula,
                              data = data, qu = quantiles,
-                             argGam = list(weights = data[[weights]]),
+                             argGam = c(argGam, list(weights = data[[weights]])),
                              ...)
   }
 

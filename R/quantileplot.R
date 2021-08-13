@@ -23,6 +23,7 @@
 #' @param inverse_transformation A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.
 #' @param granularity Integer number of points at which to evaluate each density. Defaults to 512, as in \code{stats::density()}. Higher values yield more granular density estimates.
 #' @param previous_fit The result of a previous call to \code{quantileplot}. If provided, then the \code{mqgam} fit for the quantile curves will not be re-estimated, which can be useful for iteratively deciding about other arguments in settings that are computationally demanding. This argument must be paired with other arguments that match the previous call (e.g. \code{data}, \code{formula}).
+#' @param argGam Additional arguments to the GAM for model fitting. Passed to mqgam.
 #' @param ... Other arguments passed to \code{mqgam} for fitting of smooth quantile curves.
 #'
 #' @return An object of S3 class \code{quantileplot}, which supports \code{summary()}, \code{print()}, and \code{plot()} functions. The returned object has several elements.
@@ -55,7 +56,7 @@
 #' data <- data.frame(x = x, y = y)
 #' quantileplot(y ~ s(x), data)
 
-quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL, x_break_labeller = NULL, y_break_labeller = NULL, slice_n = 7, quantiles = c(.1, .25, .5, .75, .9), quantile_notation = "label", truncation_notation = "label", uncertainty_draws = NULL, show_ci = FALSE, ci = 0.95, second_formula = NULL, x_range = NULL, y_range = NULL, x_bw = NULL, y_bw = NULL, inverse_transformation = NULL, granularity = 512, previous_fit = NULL, ...) {
+quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL, x_break_labeller = NULL, y_break_labeller = NULL, slice_n = 7, quantiles = c(.1, .25, .5, .75, .9), quantile_notation = "label", truncation_notation = "label", uncertainty_draws = NULL, show_ci = FALSE, ci = 0.95, second_formula = NULL, x_range = NULL, y_range = NULL, x_bw = NULL, y_bw = NULL, inverse_transformation = NULL, granularity = 512, previous_fit = NULL, argGam = NULL, ...) {
 
   # Make a list of all arguments, to return at end of the function
   arguments <- list(formula = formula,
@@ -79,7 +80,8 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
                     y_bw = y_bw,
                     inverse_transformation = inverse_transformation,
                     granularity = granularity,
-                    previous_fit = previous_fit)
+                    previous_fit = previous_fit,
+                    argGam = argGam)
 
   ################
   # Check inputs #
@@ -288,6 +290,7 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
                                  ci = ci,
                                  uncertainty_draws = uncertainty_draws,
                                  inverse_transformation = inverse_transformation,
+                                 argGam = argGam,
                                  ...)
   } else {
     cat("Using quantile curves from previous_fit.\n")

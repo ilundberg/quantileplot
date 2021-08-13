@@ -27,6 +27,7 @@ quantileplot(
   inverse_transformation = NULL,
   granularity = 512,
   previous_fit = NULL,
+  argGam = NULL,
   ...
 )
 }
@@ -74,6 +75,8 @@ quantileplot(
 \item{granularity}{Integer number of points at which to evaluate each density. Defaults to 512, as in \code{stats::density()}. Higher values yield more granular density estimates.}
 
 \item{previous_fit}{The result of a previous call to \code{quantileplot}. If provided, then the \code{mqgam} fit for the quantile curves will not be re-estimated, which can be useful for iteratively deciding about other arguments in settings that are computationally demanding. This argument must be paired with other arguments that match the previous call (e.g. \code{data}, \code{formula}).}
+
+\item{argGam}{Additional arguments to the GAM for model fitting. Passed to mqgam.}
 
 \item{...}{Other arguments passed to \code{mqgam} for fitting of smooth quantile curves.}
 }

@@ -14,6 +14,7 @@ gen_curves(
   ci = 0.95,
   uncertainty_draws = 10,
   inverse_transformation = NULL,
+  argGam = NULL,
   ...
 )
 }

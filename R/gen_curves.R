@@ -66,7 +66,8 @@ gen_curves <- function(formula,
   } else if (!is.null(weights) & contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(list(formula, second_formula),
                              data = data, qu = quantiles,
-                             argGam = c(argGam, list(weights = data[[weights]])),
+                             # When passing in the weights, normalize them to sum to the number of observations
+                             argGam = c(argGam, list(weights = data[[weights]] / mean(data[[weights]]))),
                              ...)
   } else if (is.null(weights) & !contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(formula,
@@ -76,7 +77,7 @@ gen_curves <- function(formula,
   } else if (!is.null(weights) & !contains_smooth_terms) {
     mqgam.out <- qgam::mqgam(formula,
                              data = data, qu = quantiles,
-                             argGam = c(argGam, list(weights = data[[weights]])),
+                             argGam = c(argGam, list(weights = data[[weights]] / mean(data[[weights]]))),
                              ...)
   }
 

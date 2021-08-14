@@ -5,23 +5,25 @@
 #' @param data Data frame containing the variables in \code{formula}. If \code{weights} are specified, they must be a column of \code{data}.
 #' @param weights String name for sampling weights, which are a column of \code{data}. If not given, a simple random sample is assumed.
 #' @param quantiles Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.
-#' @param x_range Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed. Quantile curves and densities will be estimated only on data in this range.
-#' @param y_range Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed. Densities are truncated to this range. All data contribute to quantile curve estimation regardless of \code{y_range} to avoid selection on the outcome, though the visualization is truncated to \code{y_range}.
+#' @param slice_n Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 5.
+#' @param show_ci Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.
+#' @param quantile_notation String, either \code{legend} or \code{label}. If \code{legend} (the default), then quantile curves are denoted by colors with a legend. If \code{label}, then quantile curves are annotated in the plot.
 #' @param xlab String x-axis title
 #' @param ylab String y-axis title
-#' @param show_ci Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.
-#' @param ci Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.
-#' @param slice_n Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.
-#' @param uncertainty_draws Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.
-#' @param quantile_notation String, either \code{label} or \code{legend}. If \code{label} (the default), then quantile curves are annotated in the plot. If \code{legend}, then quantile curves are denoted by colors with a legend.
-#' @param x_break_labeller Function to convert labels on x-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
-#' @param y_break_labeller Function to convert labels on y-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
-#' @param truncation_notation String, one of \code{label}, \code{label_no_pct}, or \code{none}. If \code{x_range} or \code{y_range} is narrower than the range of the data, this argument specifies how to note that truncation on the visualization. If \code{label}, then truncation is labeled including the percent of data truncated. If \code{label_no_pct}, then truncation is labeled but the percent truncated is omitted. If \code{none}, then truncation is not labeled on the plot.
-#' @param xlim Numeric vector of length 2 for custom x-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{x_range}.
-#' @param ylim Numeric vector of length 2 for custom y-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{y_range}.
+#' @param x_data_range Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed. Quantile curves and densities will be estimated only on data in this range, and the plot will note the percent truncated.
+#' @param y_data_range Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed. Densities are truncated to this range. All data contribute to quantile curve estimation regardless of \code{y_data_range} to avoid selection on the outcome, though the visualization is truncated to \code{y_data_range}. The plot will note the percent truncated.
+#' @param x_axis_range Numeric vector of length 2 for custom x-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{x_data_range}.
+#' @param y_axis_range Numeric vector of length 2 for custom y-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{y_data_range}.
+#' @param x_breaks Numeric vector of values for x-axis breaks. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
+#' @param y_breaks Numeric vector of values for x-axis breaks. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
+#' @param x_labels Vector of \code{length(x_breaks)} containing labels, or a function to convert breaks into labels. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
+#' @param y_labels Vector of \code{length(y_breaks)} containing labels, or a function to convert breaks into labels. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
 #' @param x_bw Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
 #' @param y_bw Numeric bandwidth for density estimation in the \code{y} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
-#' @param inverse_transformation A function of a scalar argument. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.
+#' @param truncation_notation String, one of \code{label}, \code{label_no_pct}, or \code{none}. If \code{x_data_range} or \code{y_data_range} is narrower than the range of the data, this argument specifies how to note that truncation on the visualization. If \code{label}, then truncation is labeled including the percent of data truncated. If \code{label_no_pct}, then truncation is labeled but the percent truncated is omitted. If \code{none}, then truncation is not labeled on the plot.
+#' @param credibility_level Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.
+#' @param uncertainty_draws A whole number. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.
+#' @param inverse_transformation A function of a scalar argument. Only used in the rare use case where the outcome has an extremely skewed distribution and the user wants to estimate the quantile curves on a transformed outcome, to be brought back to the original scale for the visualization. In that case, this argument is the function to convert from the transformed outcome back to the original scale. For instance, if the outcome in the model formula is \code{log(y + 1)} then the inverse transformation should be \code{function(y) exp(y) - 1}. This is a rare use case because it is only relevant when a transformation of the outcome aids the estimation of quantile curves. If you want to visualize on a transformed scale, you should instead create a transformed variable in \code{data} rather than conducting the transformation within the model formula. For common transformations (e.g. log(y)), the \code{inverse_transformation} argument can left \code{NULL} and will be determined automatically.
 #' @param granularity Integer number of points at which to evaluate each density. Defaults to 512, as in \code{stats::density()}. Higher values yield more granular density estimates.
 #' @param second_formula Model formula to allow the learning rate to change as a function of the predictor. This is passed to \code{mqgam} as the second element in the \code{form} argument. Defaults to the same specification as \code{formula} but without the outcome variable.
 #' @param argGam Additional arguments to the GAM for model fitting. Passed to mqgam.
@@ -39,7 +41,7 @@
 #' }
 #' \item \code{curves} is a data frame containing the estimated quantile curves.
 #' \item \code{mqgam.out} is the output from the call to the \code{mqgam} function in the \code{qgam} package, which is used to estimate the quantile curves.
-#' \item \code{x_range} and \code{y_range} are the horizontal and vertical ranges of the plot.
+#' \item \code{x_data_range} and \code{y_data_range} are the horizontal and vertical ranges of the plot.
 #' \item \code{slice_x_values} are the predictor values at which vertical conditional densities are estimated.
 #' \item \code{call} is the user's call that produced these results.
 #' \item \code{arguments} is a list of all the arguments to the function, including those specified by the user and those specified by defaults.
@@ -63,22 +65,24 @@ quantileplot <- function(
   data,
   weights = NULL,
   quantiles = c(.1, .25, .5, .75, .9),
-  x_range = NULL,
-  y_range = NULL,
+  slice_n = 5,
+  show_ci = FALSE,
+  quantile_notation = "legend",
   xlab = NULL,
   ylab = NULL,
-  show_ci = FALSE,
-  ci = 0.95,
-  slice_n = 7,
-  uncertainty_draws = NULL,
-  quantile_notation = "label",
-  x_break_labeller = NULL,
-  y_break_labeller = NULL,
-  truncation_notation = "label",
-  xlim = NULL,
-  ylim = NULL,
+  x_data_range = NULL,
+  y_data_range = NULL,
+  x_axis_range = NULL,
+  y_axis_range = NULL,
+  x_breaks = NULL,
+  y_breaks = NULL,
+  x_labels = ggplot2::waiver(),
+  y_labels = ggplot2::waiver(),
   x_bw = NULL,
   y_bw = NULL,
+  truncation_notation = "label",
+  credibility_level = 0.95,
+  uncertainty_draws = NULL,
   inverse_transformation = NULL,
   granularity = 512,
   second_formula = NULL,
@@ -91,68 +95,74 @@ quantileplot <- function(
   arguments <- list(formula = formula,
                     data = data,
                     weights = weights,
+                    quantiles = quantiles,
+                    slice_n = slice_n,
+                    show_ci = show_ci,
+                    quantile_notation = quantile_notation,
                     xlab = xlab,
                     ylab = ylab,
-                    x_break_labeller = x_break_labeller,
-                    y_break_labeller = y_break_labeller,
-                    slice_n = slice_n,
-                    quantiles = quantiles,
-                    quantile_notation = quantile_notation,
-                    truncation_notation = truncation_notation,
-                    uncertainty_draws = uncertainty_draws,
-                    show_ci = show_ci,
-                    ci = ci,
-                    second_formula = second_formula,
-                    x_range = x_range,
-                    y_range = y_range,
-                    xlim = xlim,
-                    ylim = ylim,
+                    x_data_range = x_data_range,
+                    y_data_range = y_data_range,
+                    x_axis_range = x_axis_range,
+                    y_axis_range = y_axis_range,
+                    x_breaks = x_breaks,
+                    y_breaks = y_breaks,
+                    x_labels = x_labels,
+                    y_labels = y_labels,
                     x_bw = x_bw,
                     y_bw = y_bw,
+                    truncation_notation = truncation_notation,
+                    credibility_level = credibility_level,
+                    uncertainty_draws = uncertainty_draws,
                     inverse_transformation = inverse_transformation,
                     granularity = granularity,
-                    previous_fit = previous_fit,
-                    argGam = argGam)
+                    second_formula = second_formula,
+                    argGam = argGam,
+                    previous_fit = previous_fit)
+
+  # Extract the x and y variables first because they are also used in checks
+
+  if (!rlang::is_formula(formula)) {
+    stop("Argument error: formula should be a model formula")
+  }
+  # Extract strings for the x and y variables
+  y_str <- all.vars(formula)[1]
+  x_str <- all.vars(formula)[2]
+
+  # Initialize objects that will be called by non-standard evaluation.
+  # This is only to stop a warning message in package building.
+  x <- y <- estimate <- curve <- percentile <- percentile_num <-
+    ci.max <- ci.min <- index <- num <- ymax <- ymin <- weight <-
+    variable <- x_position <- y_position <- angle <- vjust <-
+    label <- label_no_pct <- density <- x_low_pct <- x_high_pct <-
+    y_low_pct <- y_high_pct <- NULL
 
   ################
   # Check inputs #
   ################
 
-  if (!rlang::is_formula(formula)) {
-    stop("Argument error: formula should be a model formula")
-  }
+
   if (length(all.vars(formula)) != 2) {
     stop("Argument error: formula should involve one predictor and one outcome")
   }
   if (!is.data.frame(data)) {
     stop("Argument error: data should be a data frame")
   }
-  # Extract strings for the x and y variables
-  y_str <- all.vars(formula)[1]
-  x_str <- all.vars(formula)[2]
-  # Create axis labels if they were not given
-  if (is.null(xlab)) {
-    xlab <- x_str
-  }
-  if (is.null(ylab)) {
-    ylab <- y_str
-  }
-  if (!is.null(x_break_labeller)) {
-    if (!is.function(x_break_labeller)) {
-      stop("Argument error: x_break_labeller must be a function")
+  if (!is.function(x_labels) & class(x_labels) != "waiver") {
+    if (!is.numeric(x_labels) & !is.character(x_labels)) {
+      stop("Argument error: If x_labels is not a function, then it should be a numeric or character vector")
+    }
+    if (length(x_labels) != length(x_breaks)) {
+      stop("Argument error: If x_labels is a vector, it should be the same length as x_breaks")
     }
   }
-  if (!is.null(y_break_labeller)) {
-    if (!is.function(y_break_labeller)) {
-      stop("Argument error: y_break_labeller must be a function")
+  if (!is.function(y_labels) & class(y_labels) != "waiver") {
+    if (!is.numeric(y_labels) & !is.character(y_labels)) {
+      stop("Argument error: If y_labels is not a function, then it should be a numeric or character vector")
     }
-  }
-  # If not provided, set the labellers to the identity function
-  if (is.null(x_break_labeller)) {
-    x_break_labeller <- identity
-  }
-  if (is.null(y_break_labeller)) {
-    y_break_labeller <- identity
+    if (length(y_labels) != length(y_breaks)) {
+      stop("Argument error: If y_labels is a vector, it should be the same length as y_breaks")
+    }
   }
   # Check that the data object contains the x and y variables
   if (!(x_str %in% colnames(data))) {
@@ -198,11 +208,11 @@ quantileplot <- function(
   if (!is.logical(show_ci)) {
     stop("Argument error: show_ci should be TRUE or FALSE")
   }
-  if (!is.numeric(ci) | length(ci) != 1) {
-    stop("Argument error: ci should be a numeric scalar")
+  if (!is.numeric(credibility_level) | length(credibility_level) != 1) {
+    stop("Argument error: credibility_level should be a numeric scalar")
   }
-  if (ci <= 0 | ci >= 1) {
-    stop("Argument error: ci should be a credible value between 0 and 1")
+  if (credibility_level <= 0 | credibility_level >= 1) {
+    stop("Argument error: credibility_level should be a credible value between 0 and 1")
   }
   if (!is.null(second_formula)) {
     if (!rlang::is_formula(second_formula)) {
@@ -216,20 +226,20 @@ quantileplot <- function(
   if (is.null(second_formula)) {
     second_formula <- formula(paste(as.character(formula)[-2], collapse = ""))
   }
-  if (!is.null(x_range)) {
-    if (!is.numeric(x_range) | length(x_range) != 2) {
-      stop("Argument error: x_range should be a numeric vector of length 2")
+  if (!is.null(x_data_range)) {
+    if (!is.numeric(x_data_range) | length(x_data_range) != 2) {
+      stop("Argument error: x_data_range should be a numeric vector of length 2")
     }
-    if (x_range[1] >= x_range[2]) {
-      stop("Argument error: The first number in x_range should be less than the second number")
+    if (x_data_range[1] >= x_data_range[2]) {
+      stop("Argument error: The first number in x_data_range should be less than the second number")
     }
   }
-  if (!is.null(y_range)) {
-    if (!is.numeric(y_range) | length(y_range) != 2) {
-      stop("Argument error: y_range should be a numeric vector of length 2")
+  if (!is.null(y_data_range)) {
+    if (!is.numeric(y_data_range) | length(y_data_range) != 2) {
+      stop("Argument error: y_data_range should be a numeric vector of length 2")
     }
-    if (y_range[1] >= y_range[2]) {
-      stop("Argument error: The first number in y_range should be less than the second number")
+    if (y_data_range[1] >= y_data_range[2]) {
+      stop("Argument error: The first number in y_data_range should be less than the second number")
     }
   }
   if (!is.null(x_bw)) {
@@ -248,13 +258,6 @@ quantileplot <- function(
   if (abs(round(granularity) - granularity) > .00001) {
     stop("Argument error: granularity should be a whole number")
   }
-
-  # Initialize objects that will be called by non-standard evaluation.
-  # This is only to stop a warning message in package building.
-  x <- y <- estimate <- curve <- percentile <- percentile_num <-
-    ci.max <- ci.min <- index <- num <- ymax <- ymin <- weight <-
-    variable <- x_position <- y_position <- angle <- vjust <-
-    label <- label_no_pct <- density <- NULL
   if (!is.null(previous_fit)) {
     if (!all(dim(previous_fit$arguments$data) == dim(data))) {
       stop("Argument error: The supplied data argument is of a different size from the data in the supplied previous_fit")
@@ -267,7 +270,19 @@ quantileplot <- function(
     }
   }
 
-  # Get rid of missing values
+  #################
+  # Modify inputs #
+  #################
+
+  # Create axis labels if they were not given
+  if (is.null(xlab)) {
+    xlab <- x_str
+  }
+  if (is.null(ylab)) {
+    ylab <- y_str
+  }
+
+  # Remove missing values from the data and print warnings.
   if (any(is.na(data[[x_str]]))) {
     message(paste("Warning: There are",sum(is.na(data[[x_str]])),"missing values in the predictor. Those cases will be dropped."))
     data <- data[!is.na(data[[x_str]]),]
@@ -288,26 +303,81 @@ quantileplot <- function(
   if (is.null(weights)) {
     data.mod <- data.frame(x = data[[x_str]],
                            y = data[[y_str]],
-                           weight = 1 / nrow(data))
+                           weight = 1)
   } else {
     data.mod <- data.frame(x = data[[x_str]],
                            y = data[[y_str]],
                            weight = data[[weights]] / mean(data[[weights]]))
   }
-  # Remove missing values from the data,
-  # having warned of this above
-  data.mod <- stats::na.omit(data.mod)
+
+  # Set the *_data_range to be the range of the data if missing
+  if (is.null(x_data_range)) {
+    x_data_range <- range(data.mod$x)
+  }
+  if (is.null(y_data_range)) {
+    y_data_range <- range(data.mod$y)
+  }
+
+  # Determine the amount truncated at the lower and upper ends of x_data_range and y_data_range
+  truncation_amounts <- data.mod %>%
+    summarize(x_low_pct = stats::weighted.mean(x < x_data_range[1], w = weight),
+              x_high_pct = stats::weighted.mean(x > x_data_range[2], w = weight),
+              y_low_pct = stats::weighted.mean(y < y_data_range[1], w = weight),
+              y_high_pct = stats::weighted.mean(y > y_data_range[2], w = weight),
+              .groups = "drop")
+
+  # Restrict to the predictor range of interest
+  if (!is.null(x_data_range)) {
+    data.mod <- data.mod[data.mod[[x_str]] >= x_data_range[1] & data.mod[[x_str]] <= x_data_range[2],]
+  }
+
+  # Prepare components of the plot area.
+  # Find the minimum value of the horizontal grid lines to be plotted.
+  # These grid lines avoid having incorrect y-labels in the region where the x-density is (where we want no labels).
+  # This uses the labeling package that ggplot2 ordinarily calls,
+  # with 5 major breaks (the ggplot2 default number).
+  if (is.null(y_breaks)) {
+    y_breaks <- labeling::extended(y_data_range[1], y_data_range[2], 5)
+  }
+  y_minor_grid_lines <- c(min(y_breaks) - .5 * mean(diff(y_breaks)),
+                          y_breaks + .5 * mean(diff(y_breaks)))
+  y_minor_grid_lines <- y_minor_grid_lines[y_minor_grid_lines >= y_data_range[1] & y_minor_grid_lines <= y_data_range[2]]
+
+  # Determine the x-axis range to be plotted, if not provided by the user
+  if (is.null(x_axis_range) & (quantile_notation == "label")) {
+    # Slightly expand the axis to make room for the label
+    x_axis_range <- x_data_range + c(0,.25 * diff(x_data_range))
+  } else if (is.null(x_axis_range)) {
+    # If not using labels, use the data range
+    x_axis_range <- x_data_range
+  }
+
+  # Determine the y-axis range to be plotted, if not provided by the user
+  if (is.null(y_axis_range)) {
+    y_axis_range <- y_data_range
+    # If the grid lines go lower or higher, slightly expand the axis.
+    if (min(y_minor_grid_lines) < y_axis_range[1]) {
+      y_axis_range[1] <- min(y_minor_grid_lines)
+    }
+    if (max(y_minor_grid_lines) > y_axis_range[2]) {
+      y_axis_range[2] <- max(y_minor_grid_lines)
+    }
+    # If there is a note at the top or bottom, we need a little extra space
+    current_axis_range <- diff(y_axis_range)
+    if (y_data_range[1] > min(data.mod$y)) {
+      y_axis_range[1] <- y_axis_range[1] - .03 * current_axis_range
+    }
+    if (y_data_range[2] < max(data.mod$y)) {
+      y_axis_range[2] <- y_axis_range[2] + .03 * current_axis_range
+    }
+    rm(current_axis_range)
+    # Add space at the bottom for the horizontal density
+    y_axis_range[1] <- y_axis_range[1] - .2 * diff(y_axis_range)
+  }
 
   ######################
   # Conduct estimation #
   ######################
-
-  # Make a restricted version of the data that only has the predictor range of interest
-  if (!is.null(x_range)) {
-    data.restricted <- data[data[[x_str]] >= x_range[1] & data[[x_str]] <= x_range[2],]
-  } else {
-    data.restricted <- data
-  }
 
   # Create a data frame of smooth curve predictions
   if (is.null(previous_fit)) {
@@ -315,10 +385,10 @@ quantileplot <- function(
     cat("Note that this may take time. It is computationally much harder than OLS.\n")
     gen_curves.out <- gen_curves(formula = formula,
                                  second_formula = second_formula,
-                                 data = data.restricted,
+                                 data = data.mod,
                                  weights = weights,
                                  quantiles = quantiles,
-                                 ci = ci,
+                                 credibility_level = credibility_level,
                                  uncertainty_draws = uncertainty_draws,
                                  inverse_transformation = inverse_transformation,
                                  argGam = argGam,
@@ -330,159 +400,95 @@ quantileplot <- function(
   }
   curves <- gen_curves.out$curves
 
-  # Determine the x_range and y_range if NULL
-  # This step is conducted here because it those
-  # are affected by curve estimation and inputs to density estimation.
-  x_range_provided <- !is.null(x_range)
-  y_range_provided <- !is.null(y_range)
-  # Set x_range to be the range of the data
-  if (is.null(x_range)) {
-    x_range <- range(data.mod$x)
-  }
-  # Set y_range to contain all of the observed data
-  # and all of the curve estimates
-  if (is.null(y_range)) {
-    curve_y_range <- curves %>%
-      dplyr::filter(curve == "point") %>%
-      dplyr::summarize(min = min(ci.min),
-                       max = max(ci.max))
-    y_range <- c(min(c(data.mod$y, curves$ci.min[curves$curve == "point"])),
-                 max(c(data.mod$y, curves$ci.max[curves$curve == "point"])))
-  }
-
   # Generate density estimates
   cat("Beginning density estimation\n")
   densities <- gen_densities(data = data.mod,
                              slice_n = slice_n,
-                             x_range = x_range,
-                             y_range = y_range,
+                             x_data_range = x_data_range,
+                             y_data_range = y_data_range,
                              x_bw = x_bw,
                              y_bw = y_bw,
                              granularity = granularity)
 
-  ############################
-  # Below are plotting steps #
-  ############################
+  ################################################################
+  # Convert estimation output into datasets prepared for ggplot2 #
+  ################################################################
 
-  # Several inputs need to be modified to produce the plot.
-  # These lines accomplish those tasks.
-
-  # 1. Prepare components of the plot area.
-
-  # Find the minimum value of the horizontal grid lines to be plotted.
-  # These grid lines avoid having incorrect y-labels in the region where the x-density is.
-  # This uses the labeling package that ggplot2 ordinarily calls,
-  # with 5 major breaks (the ggplot2 default number).
-  major_grid_lines <- labeling::extended(y_range[1], y_range[2], 5)
-  minor_grid_lines <- c(min(major_grid_lines) - .5 * mean(diff(major_grid_lines)),
-                        major_grid_lines + .5 * mean(diff(major_grid_lines)))
-  minor_grid_lines <- minor_grid_lines[minor_grid_lines >= y_range[1] & minor_grid_lines <= y_range[2]]
-
-  # Find the size to be added to the bottom of the y-axis to hold the horizontal density
-  y_range_with_breaks <- c(
-    ifelse(y_range[1] < min(minor_grid_lines), y_range[1], min(minor_grid_lines)),
-    ifelse(y_range[2] > max(minor_grid_lines), y_range[2], max(minor_grid_lines))
-  )
-  # If there is a note at the bottom, we ned a little extra space there
-  if (y_range[1] > min(data.mod$y)) {
-    y_bottom_padding <- .03 * diff(y_range_with_breaks)
-  } else {
-    y_bottom_padding <- 0
-  }
-  # Prepare an offset space for the marginal density
-  y_offset <- 0.2 * diff(y_range_with_breaks)
-  # If there is a note at the top, we need a little extra space there
-  if (y_range[2] < max(data.mod$y)) {
-    y_range_with_breaks[2] <- y_range_with_breaks[2] + .03 * diff(y_range_with_breaks)
-  }
-
-  # 2. Prepare densities.
-
-  # Modify the marginal density estimates to prepare for use with geom_ribbon()
+  # Prepare the marginal density for use with geom_ribbon()
   marginal <- densities$marginal %>%
-    mutate(x = x,
-           ymin = y_range_with_breaks[[1]] - y_offset - y_bottom_padding,
-           ymax =  0.8 * (density / max(density)) * y_offset + y_range_with_breaks[[1]] - y_offset - y_bottom_padding)
+    dplyr::mutate(x = x,
+                  ymin = y_axis_range[1],
+                  ymax = y_axis_range[1] + (density / max(density)) * 0.15 * diff(y_data_range))
 
-  # Modify the conditional density estimates to prepare for use with geom_polygon()
+  # Prepare the conditional density for use with geom_polygon()
   x_spacing <- .9*diff(sort(unique(densities$conditional$x)))[1]
   conditional <- densities$conditional %>%
     # Make the highest point of the highest conditional density
     # equal the amount of space between vertical slices
-    mutate(density = density / max(density) * x_spacing) %>%
-    # Begin modifying the dataset to have density = 0 at the endpoints
-    # to faciliate polygon plotting
-    group_by(x) %>%
-    arrange(x,y) %>%
-    mutate(index = 1:n()) %>%
-    group_by() %>%
-    bind_rows(densities$conditional %>%
-                group_by(x) %>%
-                arrange(x,y) %>%
-                mutate(num = n()) %>%
-                # Keep only the first and last observations
-                filter(1:n() %in% c(1,n())) %>%
-                # Assign them densities of zero and new indices
-                mutate(density = 0,
-                       index = ifelse(1:n() == 1, 0, num + 1)) %>%
-                select(-num) %>%
-                group_by()) %>%
-    arrange(x,index)
+    dplyr::mutate(density = density / max(density) * x_spacing) %>%
+    # Append density = 0 at the endpoints to facilitate polygon plotting.
+    # This is needed because the polygons should go down to density = 0 at the ends.
+    dplyr::group_by(x) %>%
+    dplyr::arrange(x,y) %>%
+    dplyr::mutate(index = 1:n()) %>%
+    dplyr::ungroup() %>%
+    dplyr::bind_rows(densities$conditional %>%
+                       dplyr::group_by(x) %>%
+                       dplyr::arrange(x,y) %>%
+                       dplyr::mutate(num = n()) %>%
+                       # Keep only the first and last observations
+                       dplyr::filter(1:n() %in% c(1,n())) %>%
+                       # Assign them densities of zero and new indices
+                       dplyr::mutate(density = 0,
+                                     index = ifelse(1:n() == 1, 0, num + 1)) %>%
+                       dplyr::select(-num) %>%
+                       dplyr::ungroup()) %>%
+    dplyr::arrange(x,index)
 
-  # 3. Prepare curves
+  # If not specified by user, use x-axis breaks that correspond to the data limits.
+  # Ideally, use breaks to correspond to the vertical slices
+  if (is.null(x_breaks)) {
+    x_breaks <- labeling::extended(x_data_range[1], x_data_range[2], slice_n + 2)
+    # Sometimes that selects a number of breaks not equal to slice_n + 2.
+    # That happens if the slice_n + 2 breaks would produce weird numbers for the labels.
+    # In that case, the breaks will not align with the slices.
+    # Go with 5 breaks in that case, because this is a nice number of breaks.
+    if (length(x_breaks) != slice_n + 2) {
+      x_breaks <- labeling::extended(x_data_range[1], x_data_range[2], 5)
+    }
+  }
 
-  # For the main plot, extract the point estimate from the curves object
-  # and address issues of estimates beyond the range of the visualization
+  # Prepare curves for plotting.
+  # A key step here is to truncate the curves when they go beyond the range of the visualization.
   curves_point <- curves %>%
     dplyr::filter(curve == "point") %>%
-    dplyr::filter(x >= x_range[1] & x <= x_range[2]) %>%
-    # Truncate the confidence bands at the edges of the plot.
-    # This is ok because it will be noted in the visualization.
-    dplyr::mutate(estimate = ifelse(estimate >= y_range[1] & estimate <= y_range[2],
-                                    estimate, NA),
+    # Truncate to the x_data_range
+    dplyr::filter(x >= x_data_range[1] & x <= x_data_range[2]) %>%
+    # Truncate the estimate and confidence bands if they go vertically outside the plot.
+    # We truncate them by making them NA if outside the range.
+    dplyr::mutate(estimate = case_when(estimate >= y_data_range[1] & estimate <= y_data_range[2] ~ estimate),
                   ci.min = dplyr::case_when(
                     # If ci.min is in range, use ci.min
-                    ci.min >= y_range[1] & ci.min <= y_range[2] ~ ci.min,
-                    # If the whole band is out of range, use NA
-                    #(ci.min < y_range[1] & ci.max < y_range[1]) |
-                    #  (ci.min > y_range[2] & ci.max > y_range[2]) ~ NA,
-                    # If ci.min is below the range but ci.max is in range, use the bottom of the range
-                    ci.min < y_range[1] & ci.max >= y_range[1] & ci.max <= y_range[2] ~ y_range[1],
+                    ci.min >= y_data_range[1] & ci.min <= y_data_range[2] ~ ci.min,
+                    # If ci.min is below the range but ci.max is in range, use the bottom of the range for ci.min.
+                    # This causes the confidence band to plot right up to the bottom of the visualization range.
+                    ci.min < y_data_range[1] & ci.max >= y_data_range[1] & ci.max <= y_data_range[2] ~ y_data_range[1],
                     # If the band is the full range, use the full range
-                    ci.min < y_range[1] & ci.max > y_range[2] ~ y_range[1]
+                    ci.min < y_data_range[1] & ci.max > y_data_range[2] ~ y_data_range[1]
                   ),
                   ci.max = dplyr::case_when(
                     # If ci.max is in range, use ci.max
-                    ci.max >= y_range[1] & ci.max <= y_range[2] ~ ci.max,
-                    # If the whole band is out of range, use NA
-                    #(ci.min < y_range[1] & ci.max < y_range[1]) |
-                    #  (ci.min > y_range[2] & ci.max > y_range[2]) ~ NA,
-                    # If ci.max is above the range but ci.min is in range, use the top of the range
-                    ci.max > y_range[2] & ci.min >= y_range[1] & ci.min <= y_range[2] ~ y_range[2],
+                    ci.max >= y_data_range[1] & ci.max <= y_data_range[2] ~ ci.max,
+                    # If ci.max is above the range but ci.min is in range, use the top of the range for ci.max
+                    # This causes the confidence band to plot right up to the top of the visualization range.
+                    ci.max > y_data_range[2] & ci.min >= y_data_range[1] & ci.min <= y_data_range[2] ~ y_data_range[2],
                     # If the band is the full range, use the full range
-                    ci.min < y_range[1] & ci.max > y_range[2] ~ y_range[2]
+                    ci.min < y_data_range[1] & ci.max > y_data_range[2] ~ y_data_range[2]
                   ))
 
   ####################
   # PRODUCE THE PLOT #
   ####################
-
-  # Determine the axis range to be plotted, or use the user-specified range
-  if (!is.null(xlim)) {
-    # Use user-specified if provided
-    x_range_for_plot <- xlim
-  } else if (quantile_notation == "legend") {
-    # Else, use range of x if we have a legend
-    x_range_for_plot <- x_range
-  } else {
-    # Else, expand the range to make room for the labels
-    x_range_for_plot <- x_range + c(0,.25 * diff(x_range))
-  }
-  if (is.null(ylim)) {
-    y_range_for_plot <- c(y_range_with_breaks[[1]] - y_offset - y_bottom_padding, y_range_with_breaks[[2]])
-  } else {
-    y_range_for_plot <- ylim
-  }
 
   p <- ggplot2::ggplot() +
     # Conditional densities (vertical slices)
@@ -495,25 +501,23 @@ quantileplot <- function(
                          fill = "gray", alpha = .8 ) +
     # Smooth curves for conditional quantiles
     ggplot2::geom_line(data = curves_point %>%
-                         # Remove the estimates that are NA
-                         # which would be because we removed them due to being
-                         # outside the user-specified y_range.
-                         dplyr::filter(!is.na(estimate)),
+                         # Remove cases where the point estimate is NA because outside the range
+                         filter(!is.na(estimate)),
                        ggplot2::aes(x = x, y = estimate, color = percentile)) +
     # Modify the color scale
     ggthemes::scale_color_colorblind(
       guide = ggplot2::guide_legend(reverse = TRUE, label.position = "left",
                                     title = "Percentile")
     ) +
-    ggplot2::scale_x_continuous(breaks = labeling::extended(x_range[1], x_range[2], 4),
-                                labels = x_break_labeller) +
-    ggplot2::scale_y_continuous(breaks = major_grid_lines,
-                                minor_breaks = c(y_range_with_breaks[[1]] - y_offset - y_bottom_padding, minor_grid_lines),
-                                labels = y_break_labeller) +
+    ggplot2::scale_x_continuous(breaks = x_breaks,
+                                labels = x_labels) +
+    ggplot2::scale_y_continuous(breaks = y_breaks,
+                                minor_breaks = c(y_axis_range[1], y_minor_grid_lines),
+                                labels = y_labels) +
     # Define the axis limits
     ggplot2::coord_cartesian(
-      xlim = x_range_for_plot,
-      ylim = y_range_for_plot,
+      xlim = x_axis_range,
+      ylim = y_axis_range,
       expand = TRUE,
       default = FALSE,
       clip = "on"
@@ -533,13 +537,6 @@ quantileplot <- function(
 
   # If labels on the lines are requested, then use those instead of colors
   if (quantile_notation == "label") {
-    # If the user did not specify the x-range, modify the default to make space for the annotations
-    if (!x_range_provided) {
-      x_range_modified <- x_range + c(0,.25 * diff(x_range))
-    } else {
-      # If the user specified the range, keep that one.
-      x_range_modified <- x_range
-    }
     # The suppressMessages() below just stops the message that ggplot2 is replacing
     # an existing scale and coordinate system. Those replacements are intentional
     # here, and the message might confuse a user.
@@ -547,7 +544,7 @@ quantileplot <- function(
       p +
         ggplot2::geom_text(data = curves_point %>%
                              filter(x == max(x)),
-                           ggplot2::aes(x = x + .02 * diff(x_range),
+                           ggplot2::aes(x = x + .02 * diff(x_data_range),
                                         y = estimate,
                                         hjust = 0,
                                         label = paste0(percentile," percentile")),
@@ -555,10 +552,8 @@ quantileplot <- function(
         ggplot2::scale_color_manual(values = rep("black",length(quantiles))) +
         # Expand the x range to make space for those labels
         ggplot2::coord_cartesian(
-          # If the user specified the x_range, use that range.
-          # Otherwise expand the range to make space for the annotations.
-          xlim = x_range_for_plot,
-          ylim = y_range_for_plot,
+          xlim = x_axis_range,
+          ylim = y_axis_range,
           expand = TRUE,
           default = FALSE,
           clip = "on"
@@ -567,22 +562,16 @@ quantileplot <- function(
     )
   }
 
-  # If the x_range and/or y_range are truncated, note that in the plot
+  # If the x_data_range and/or y_data_range are truncated, note that in the plot
   pretty_pct <- function(raw_pct) {
     ifelse(raw_pct < .01, "< 1 %",
            paste0(round(100 * raw_pct)," %"))
   }
-  truncation <- data.mod %>%
-    dplyr::summarize(x_low_any = any(x < x_range[1]),
-                     x_high_any = any(x > x_range[2]),
-                     y_low_any = any(y < y_range[1]),
-                     y_high_any = any(y > y_range[2]),
-                     # Determine amount truncated
-                     x_low_pct = stats::weighted.mean(x < x_range[1], w = weight),
-                     x_high_pct = stats::weighted.mean(x > x_range[2], w = weight),
-                     y_low_pct = stats::weighted.mean(y < y_range[1], w = weight),
-                     y_high_pct = stats::weighted.mean(y > y_range[2], w = weight),
-                     .groups = "drop") %>%
+  truncation <- truncation_amounts %>%
+    mutate(x_low_any = x_low_pct > 0,
+           x_high_any = x_high_pct > 0,
+           y_low_any = y_low_pct > 0,
+           y_high_any = y_high_pct > 0) %>%
     reshape2::melt(id = NULL) %>%
     tidyr::separate(variable, into = c("variable","end","quantity")) %>%
     tidyr::pivot_wider(names_from = "quantity", values_from = "value") %>%
@@ -592,15 +581,15 @@ quantileplot <- function(
                   label = case_when(any == 0 ~ "",
                                     T ~ paste0(label_no_pct,": ",pretty_pct(pct)))) %>%
     # Determine the x position of the annotation
-    dplyr::mutate(x_position = dplyr::case_when(variable == "x" & end == "low" ~ x_range[1],
-                                                variable == "x" & end == "high" ~ x_range[2],
-                                                variable == "y" & end == "low" ~ mean(x_range),
-                                                variable == "y" & end == "high" ~ mean(x_range))) %>%
+    dplyr::mutate(x_position = dplyr::case_when(variable == "x" & end == "low" ~ x_data_range[1],
+                                                variable == "x" & end == "high" ~ x_data_range[2],
+                                                variable == "y" & end == "low" ~ mean(x_data_range),
+                                                variable == "y" & end == "high" ~ mean(x_data_range))) %>%
     # Determine the y position of the annotation
-    dplyr::mutate(y_position = dplyr::case_when(variable == "x" & end == "low" ~ mean(y_range),
-                                                variable == "x" & end == "high" ~ mean(y_range),
-                                                variable == "y" & end == "low" ~ y_range[1],
-                                                variable == "y" & end == "high" ~ y_range[2])) %>%
+    dplyr::mutate(y_position = dplyr::case_when(variable == "x" & end == "low" ~ mean(y_data_range),
+                                                variable == "x" & end == "high" ~ mean(y_data_range),
+                                                variable == "y" & end == "low" ~ y_data_range[1],
+                                                variable == "y" & end == "high" ~ y_data_range[2])) %>%
     # Determine the angle of the annotation
     dplyr::mutate(angle = dplyr::case_when(variable == "x" ~ 90,
                                            variable == "y" ~ 0)) %>%
@@ -661,16 +650,16 @@ quantileplot <- function(
                            color = "black", size = .1) +
         # Define the axis limits
         ggplot2::coord_cartesian(
-          xlim = x_range,
-          ylim = c(y_range_with_breaks[[1]] - y_offset - y_bottom_padding, y_range_with_breaks[[2]]),
+          xlim = x_axis_range,
+          ylim = y_axis_range,
           expand = TRUE,
           default = FALSE,
           clip = "on"
         ) +
-        ggplot2::scale_x_continuous(breaks = labeling::extended(x_range[1], x_range[2], 3),
-                                    labels = x_break_labeller) +
-        ggplot2::scale_y_continuous(breaks = labeling::extended(y_range[1], y_range[2], 3),
-                                    labels = y_break_labeller) +
+        ggplot2::scale_x_continuous(breaks = labeling::extended(x_data_range[1], x_data_range[2], 3),
+                                    labels = x_labels) +
+        ggplot2::scale_y_continuous(breaks = labeling::extended(y_data_range[1], y_data_range[2], 3),
+                                    labels = y_labels) +
         ggplot2::theme_bw() +
         ggplot2::theme(plot.title = ggplot2::element_text(size = 8),
                        axis.title = ggplot2::element_blank()) +
@@ -686,8 +675,8 @@ quantileplot <- function(
     densities = densities,
     curves = gen_curves.out$curves,
     mqgam.out = gen_curves.out$mqgam.out,
-    x_range = x_range,
-    y_range = y_range,
+    x_data_range = x_data_range,
+    y_data_range = y_data_range,
     slice_x_values = unique(densities$conditional$x),
     call = match.call(),
     arguments = arguments

@@ -7,7 +7,7 @@
 #' @param weights String name for sampling weights, which are a column of \code{data}. If not given, a simple random sample is assumed.
 #' @param quantiles Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.
 #' @param show_ci Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.
-#' @param ci Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.
+#' @param credibility_level Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.
 #' @param uncertainty_draws Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.
 #' @param inverse_transformation A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.
 #' @param argGam Additional arguments to the GAM for model fitting. Passed to mqgam.
@@ -25,7 +25,7 @@ gen_curves <- function(formula,
                        weights = NULL,
                        quantiles = c(.1, .25, .5, .75, .9),
                        show_ci = FALSE,
-                       ci = 0.95,
+                       credibility_level = 0.95,
                        uncertainty_draws = 10,
                        inverse_transformation = NULL,
                        argGam = NULL,
@@ -116,8 +116,8 @@ gen_curves <- function(formula,
     point_df <- data.frame(curve = "point",
                            x = to_predict[[1]],
                            estimate = inverse_transformation(yhat_point),
-                           ci.min = inverse_transformation(yhat_point - stats::qnorm((1 + ci) / 2) * yhat_se),
-                           ci.max = inverse_transformation(yhat_point + stats::qnorm((1 + ci) / 2) * yhat_se))
+                           ci.min = inverse_transformation(yhat_point - stats::qnorm((1 + credibility_level) / 2) * yhat_se),
+                           ci.max = inverse_transformation(yhat_point + stats::qnorm((1 + credibility_level) / 2) * yhat_se))
 
     # Calculate uncertainty_draws simulated curves
     if (!is.null(uncertainty_draws)) {

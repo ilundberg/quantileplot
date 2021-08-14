@@ -7,8 +7,8 @@
 gen_densities(
   data,
   slice_n = 7,
-  x_range = NULL,
-  y_range = NULL,
+  x_data_range = NULL,
+  y_data_range = NULL,
   x_bw = NULL,
   y_bw = NULL,
   granularity = 512
@@ -19,9 +19,9 @@ gen_densities(
 
 \item{slice_n}{Integer number of conditional densities to be plotted for \code{y} given \code{x}. These appear in the visualization as vertical slices. Default is 7.}
 
-\item{x_range}{Numeric vector of length 2 containing the range of x-axis to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.}
+\item{x_data_range}{Numeric vector of length 2 containing the range of x-axis to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.}
 
-\item{y_range}{Numeric vector of length 2 containing the range of y-axis to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.}
+\item{y_data_range}{Numeric vector of length 2 containing the range of y-axis to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.}
 
 \item{x_bw}{Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.}
 

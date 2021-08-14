@@ -11,7 +11,7 @@ gen_curves(
   weights = NULL,
   quantiles = c(0.1, 0.25, 0.5, 0.75, 0.9),
   show_ci = FALSE,
-  ci = 0.95,
+  credibility_level = 0.95,
   uncertainty_draws = 10,
   inverse_transformation = NULL,
   argGam = NULL,
@@ -31,7 +31,7 @@ gen_curves(
 
 \item{show_ci}{Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.}
 
-\item{ci}{Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.}
+\item{credibility_level}{Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.}
 
 \item{uncertainty_draws}{Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.}
 

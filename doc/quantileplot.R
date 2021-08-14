@@ -34,21 +34,20 @@ quantileplot(
   slice_n = 3,
   # Customize which quantiles are depicted
   quantiles = c(.3,.5,.7),
-  # Denote quantiles by colors with a legend instead of by labels
-  quantile_notation = "legend"
+  # Denote quantiles by colors with labels instead of colors
+  quantile_notation = "label"
 )
 
 ## ---- results = F-------------------------------------------------------------
 quantileplot(y ~ s(x), 
              data = sim_data,
-             quantile_notation = "legend",
-             x_range = c(0,.5),
-             y_range = c(0,1),
+             x_data_range = c(0,.5),
+             y_data_range = c(0,1),
              show_ci = T)
 
 ## ---- results = F-------------------------------------------------------------
 library(ggplot2)
-my_plot <- quantileplot(y ~ s(x), data = sim_data, quantile_notation = "legend")
+my_plot <- quantileplot(y ~ s(x), data = sim_data)
 my_plot$plot +
   ggtitle("A custom title for the plot") +
   theme_light() +
@@ -57,18 +56,11 @@ my_plot$plot +
                                           title = "Custom\nlegend\ntitle and\ncolors")) +
   xlab(expression(Custom~axis~title~could~have~something~bold(bold))) +
   scale_y_continuous(breaks = c(0,1,2),
+                     labels = c("Custom\nlabel at 0",
+                                "Another\ncustom\nlabel at 1",
+                                "Custom\nlabel at 2"),
                      name = "Custom y-axis\nbreaks and\nrotated title") +
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
-
-## ---- results = F-------------------------------------------------------------
-my_plot$plot +
-  scale_x_continuous(breaks = c(0,.25,.5,.75,1),
-                     labels = c("First break\nat 0",
-                                "Second break\nat .25",
-                                "Third break\nat .5",
-                                "Fourth break\nat .5",
-                                "Fifth break\nat 1"),
-                     name = "\nManually customize axis breaks\nby modifying the ggplot2 object produced by quantileplot()")
 
 ## ---- results = F-------------------------------------------------------------
 my_plot <- quantileplot(y ~ s(x), data = sim_data, quantile_notation = "label")

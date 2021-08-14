@@ -9,22 +9,24 @@ quantileplot(
   data,
   weights = NULL,
   quantiles = c(0.1, 0.25, 0.5, 0.75, 0.9),
-  x_range = NULL,
-  y_range = NULL,
+  slice_n = 5,
+  show_ci = FALSE,
+  quantile_notation = "legend",
   xlab = NULL,
   ylab = NULL,
-  show_ci = FALSE,
-  ci = 0.95,
-  slice_n = 7,
-  uncertainty_draws = NULL,
-  quantile_notation = "label",
-  x_break_labeller = NULL,
-  y_break_labeller = NULL,
-  truncation_notation = "label",
-  xlim = NULL,
-  ylim = NULL,
+  x_data_range = NULL,
+  y_data_range = NULL,
+  x_axis_range = NULL,
+  y_axis_range = NULL,
+  x_breaks = NULL,
+  y_breaks = NULL,
+  x_labels = ggplot2::waiver(),
+  y_labels = ggplot2::waiver(),
   x_bw = NULL,
   y_bw = NULL,
+  truncation_notation = "label",
+  credibility_level = 0.95,
+  uncertainty_draws = NULL,
   inverse_transformation = NULL,
   granularity = 512,
   second_formula = NULL,
@@ -42,39 +44,43 @@ quantileplot(
 
 \item{quantiles}{Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.}
 
-\item{x_range}{Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed. Quantile curves and densities will be estimated only on data in this range.}
+\item{slice_n}{Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 5.}
 
-\item{y_range}{Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed. Densities are truncated to this range. All data contribute to quantile curve estimation regardless of \code{y_range} to avoid selection on the outcome, though the visualization is truncated to \code{y_range}.}
+\item{show_ci}{Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.}
+
+\item{quantile_notation}{String, either \code{legend} or \code{label}. If \code{legend} (the default), then quantile curves are denoted by colors with a legend. If \code{label}, then quantile curves are annotated in the plot.}
 
 \item{xlab}{String x-axis title}
 
 \item{ylab}{String y-axis title}
 
-\item{show_ci}{Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.}
+\item{x_data_range}{Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed. Quantile curves and densities will be estimated only on data in this range, and the plot will note the percent truncated.}
 
-\item{ci}{Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.}
+\item{y_data_range}{Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed. Densities are truncated to this range. All data contribute to quantile curve estimation regardless of \code{y_data_range} to avoid selection on the outcome, though the visualization is truncated to \code{y_data_range}. The plot will note the percent truncated.}
 
-\item{slice_n}{Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.}
+\item{x_axis_range}{Numeric vector of length 2 for custom x-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{x_data_range}.}
 
-\item{uncertainty_draws}{Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.}
+\item{y_axis_range}{Numeric vector of length 2 for custom y-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{y_data_range}.}
 
-\item{quantile_notation}{String, either \code{label} or \code{legend}. If \code{label} (the default), then quantile curves are annotated in the plot. If \code{legend}, then quantile curves are denoted by colors with a legend.}
+\item{x_breaks}{Numeric vector of values for x-axis breaks. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
 
-\item{x_break_labeller}{Function to convert labels on x-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
+\item{y_breaks}{Numeric vector of values for x-axis breaks. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
 
-\item{y_break_labeller}{Function to convert labels on y-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
+\item{x_labels}{Vector of \code{length(x_breaks)} containing labels, or a function to convert breaks into labels. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
 
-\item{truncation_notation}{String, one of \code{label}, \code{label_no_pct}, or \code{none}. If \code{x_range} or \code{y_range} is narrower than the range of the data, this argument specifies how to note that truncation on the visualization. If \code{label}, then truncation is labeled including the percent of data truncated. If \code{label_no_pct}, then truncation is labeled but the percent truncated is omitted. If \code{none}, then truncation is not labeled on the plot.}
-
-\item{xlim}{Numeric vector of length 2 for custom x-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{x_range}.}
-
-\item{ylim}{Numeric vector of length 2 for custom y-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{y_range}.}
+\item{y_labels}{Vector of \code{length(y_breaks)} containing labels, or a function to convert breaks into labels. Alternatively, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
 
 \item{x_bw}{Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.}
 
 \item{y_bw}{Numeric bandwidth for density estimation in the \code{y} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.}
 
-\item{inverse_transformation}{A function of a scalar argument. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.}
+\item{truncation_notation}{String, one of \code{label}, \code{label_no_pct}, or \code{none}. If \code{x_data_range} or \code{y_data_range} is narrower than the range of the data, this argument specifies how to note that truncation on the visualization. If \code{label}, then truncation is labeled including the percent of data truncated. If \code{label_no_pct}, then truncation is labeled but the percent truncated is omitted. If \code{none}, then truncation is not labeled on the plot.}
+
+\item{credibility_level}{Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.}
+
+\item{uncertainty_draws}{A whole number. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.}
+
+\item{inverse_transformation}{A function of a scalar argument. Only used in the rare use case where the outcome has an extremely skewed distribution and the user wants to estimate the quantile curves on a transformed outcome, to be brought back to the original scale for the visualization. In that case, this argument is the function to convert from the transformed outcome back to the original scale. For instance, if the outcome in the model formula is \code{log(y + 1)} then the inverse transformation should be \code{function(y) exp(y) - 1}. This is a rare use case because it is only relevant when a transformation of the outcome aids the estimation of quantile curves. If you want to visualize on a transformed scale, you should instead create a transformed variable in \code{data} rather than conducting the transformation within the model formula. For common transformations (e.g. log(y)), the \code{inverse_transformation} argument can left \code{NULL} and will be determined automatically.}
 
 \item{granularity}{Integer number of points at which to evaluate each density. Defaults to 512, as in \code{stats::density()}. Higher values yield more granular density estimates.}
 
@@ -98,7 +104,7 @@ An object of S3 class \code{quantileplot}, which supports \code{summary()}, \cod
 }
 \item \code{curves} is a data frame containing the estimated quantile curves.
 \item \code{mqgam.out} is the output from the call to the \code{mqgam} function in the \code{qgam} package, which is used to estimate the quantile curves.
-\item \code{x_range} and \code{y_range} are the horizontal and vertical ranges of the plot.
+\item \code{x_data_range} and \code{y_data_range} are the horizontal and vertical ranges of the plot.
 \item \code{slice_x_values} are the predictor values at which vertical conditional densities are estimated.
 \item \code{call} is the user's call that produced these results.
 \item \code{arguments} is a list of all the arguments to the function, including those specified by the user and those specified by defaults.

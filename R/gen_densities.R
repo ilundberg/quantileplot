@@ -4,8 +4,8 @@
 #'
 #' @param data Data frame containing columns \code{x}, \code{y}, and \code{weight}. For a simple random sample, set \code{weight} to be constant.
 #' @param slice_n Integer number of conditional densities to be plotted for \code{y} given \code{x}. These appear in the visualization as vertical slices. Default is 7.
-#' @param x_range Numeric vector of length 2 containing the range of x-axis to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.
-#' @param y_range Numeric vector of length 2 containing the range of y-axis to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.
+#' @param x_data_range Numeric vector of length 2 containing the range of x-axis to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.
+#' @param y_data_range Numeric vector of length 2 containing the range of y-axis to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.
 #' @param x_bw Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
 #' @param y_bw Numeric bandwidth for density estimation in the \code{y} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
 #' @param granularity Integer number of points at which to evaluate each density. Defaults to 512, as in \code{stats::density()}. Higher values yield more granular density estimates.
@@ -18,7 +18,7 @@
 #'
 #' @export
 #' @import dplyr
-gen_densities <- function(data, slice_n = 7, x_range = NULL, y_range = NULL, x_bw = NULL, y_bw = NULL, granularity = 512) {
+gen_densities <- function(data, slice_n = 7, x_data_range = NULL, y_data_range = NULL, x_bw = NULL, y_bw = NULL, granularity = 512) {
   if (!all(c("x","y","weight") %in% colnames(data))) {
     stop("The data object passed to gen_densities must have these columns: x, y, weight")
   }
@@ -45,19 +45,29 @@ gen_densities <- function(data, slice_n = 7, x_range = NULL, y_range = NULL, x_b
     y_bw <- stats::density(data$y, weights = data$weight, kernel = "gaussian")$bw
     cat(paste("y_bw =",y_bw,"\n"))
   }
-  # If x_range or y_range is null, replace with the range of the data
-  if (is.null(x_range)) {
-    x_range <- range(data$x)
+  # If x_data_range or y_data_range is null, replace with the range of the data
+  if (is.null(x_data_range)) {
+    x_data_range <- range(data$x)
   }
-  if (is.null(y_range)) {
-    y_range = range(data$y)
+  if (is.null(y_data_range)) {
+    y_data_range = range(data$y)
   }
 
   # Define the grid of values at which to estimate densities.
   # Spread the grid evenly over the range, excluding the endpoints.
-  marginal_x_seq <- seq(x_range[1], x_range[2], length.out = granularity + 2)[2:(granularity + 1)]
-  conditional_x_seq <- seq(x_range[1], x_range[2], length.out = slice_n + 2)[2:(slice_n + 1)]
-  conditional_y_seq <- seq(y_range[1], y_range[2], length.out = granularity + 2)[2:(granularity + 1)]
+  marginal_x_seq <- seq(x_data_range[1], x_data_range[2], length.out = granularity + 2)[2:(granularity + 1)]
+  # Use labeling::extended to select slice locations to match the vertical major grid lines
+  grid_line_locations <- labeling::extended(x_data_range[1], x_data_range[2], slice_n + 2)
+  if (length(grid_line_locations) == slice_n + 2) {
+    conditional_x_seq <- grid_line_locations[2:(slice_n + 1)]
+  } else {
+    # Sometimes labeling::extended chooses a different number of points to help with label making.
+    # In that case, stick with the number of slices the user requested.
+    conditional_x_seq <- seq(x_data_range[1], x_data_range[2], length.out = slice_n + 2)[2:(slice_n + 1)]
+  }
+  rm(grid_line_locations)
+  # For the conditional y sequence, manually set a sequence based on the chosen granularity
+  conditional_y_seq <- seq(y_data_range[1], y_data_range[2], length.out = granularity + 2)[2:(granularity + 1)]
 
   # Estimate the marginal density
   marginal_density <- data.frame(x = rep(NA, granularity),

@@ -1,32 +1,32 @@
 #' Create a Smooth Quantile Plot
 #'
 #' @description Creates a bivariate, smooth quantile plot. This is the central function of the \code{quantileplot} package. This plot visualizes estimates of the marginal density of the predictor, the conditional density of the outcome at selected values of the predictor, and smooth curves showing quantiles of the outcome as smooth functions of the predictor. This package is described in greater depth by Lee et al. (2021), which is a generalization of Lundberg and Stewart (2020). The statistical core of the package relies on the methods of Fasiolo et al. (2020).
-#' @param formula A bivariate model formula (e.g. \code{y ~ x})
+#' @param formula A bivariate model formula (e.g. \code{y ~ s(x)})
 #' @param data Data frame containing the variables in \code{formula}. If \code{weights} are specified, they must be a column of \code{data}.
 #' @param weights String name for sampling weights, which are a column of \code{data}. If not given, a simple random sample is assumed.
+#' @param quantiles Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.
+#' @param x_range Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed. Quantile curves and densities will be estimated only on data in this range.
+#' @param y_range Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed. Densities are truncated to this range. All data contribute to quantile curve estimation regardless of \code{y_range} to avoid selection on the outcome, though the visualization is truncated to \code{y_range}.
 #' @param xlab String x-axis title
 #' @param ylab String y-axis title
-#' @param x_break_labeller Function to convert labels on x-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
-#' @param y_break_labeller Function to convert labels on y-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
-#' @param slice_n Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.
-#' @param quantiles Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.
-#' @param quantile_notation String, either \code{label} or \code{legend}. If \code{label} (the default), then quantile curves are annotated in the plot. If \code{legend}, then quantile curves are denoted by colors with a legend.
-#' @param truncation_notation String, one of \code{label}, \code{label_no_pct}, or \code{none}. If \code{x_range} or \code{y_range} is narrower than the range of the data, this argument specifies how to note that truncation on the visualization. If \code{label}, then truncation is labeled including the percent of data truncated. If \code{label_no_pct}, then truncation is labeled but the percent truncated is omitted. If \code{none}, then truncation is not labeled on the plot.
-#' @param uncertainty_draws Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.
 #' @param show_ci Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.
 #' @param ci Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.
-#' @param second_formula Model formula to allow the learning rate to change as a function of the predictor. This is passed to \code{mqgam} as the second element in the \code{form} argument. Defaults to the same specification as \code{formula} but without the outcome variable.
-#' @param x_range Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.
-#' @param y_range Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.
+#' @param slice_n Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.
+#' @param uncertainty_draws Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.
+#' @param quantile_notation String, either \code{label} or \code{legend}. If \code{label} (the default), then quantile curves are annotated in the plot. If \code{legend}, then quantile curves are denoted by colors with a legend.
+#' @param x_break_labeller Function to convert labels on x-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
+#' @param y_break_labeller Function to convert labels on y-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
+#' @param truncation_notation String, one of \code{label}, \code{label_no_pct}, or \code{none}. If \code{x_range} or \code{y_range} is narrower than the range of the data, this argument specifies how to note that truncation on the visualization. If \code{label}, then truncation is labeled including the percent of data truncated. If \code{label_no_pct}, then truncation is labeled but the percent truncated is omitted. If \code{none}, then truncation is not labeled on the plot.
 #' @param xlim Numeric vector of length 2 for custom x-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{x_range}.
 #' @param ylim Numeric vector of length 2 for custom y-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{y_range}.
 #' @param x_bw Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
 #' @param y_bw Numeric bandwidth for density estimation in the \code{y} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
-#' @param inverse_transformation A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.
+#' @param inverse_transformation A function of a scalar argument. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.
 #' @param granularity Integer number of points at which to evaluate each density. Defaults to 512, as in \code{stats::density()}. Higher values yield more granular density estimates.
-#' @param previous_fit The result of a previous call to \code{quantileplot}. If provided, then the \code{mqgam} fit for the quantile curves will not be re-estimated, which can be useful for iteratively deciding about other arguments in settings that are computationally demanding. This argument must be paired with other arguments that match the previous call (e.g. \code{data}, \code{formula}).
+#' @param second_formula Model formula to allow the learning rate to change as a function of the predictor. This is passed to \code{mqgam} as the second element in the \code{form} argument. Defaults to the same specification as \code{formula} but without the outcome variable.
 #' @param argGam Additional arguments to the GAM for model fitting. Passed to mqgam.
-#' @param ... Other arguments passed to \code{mqgam} for fitting of smooth quantile curves.
+#' @param previous_fit The result of a previous call to \code{quantileplot}. If provided, then the \code{mqgam} fit for the quantile curves will not be re-estimated, which can be useful for iteratively deciding about other arguments in settings that are computationally demanding. This argument must be paired with other arguments that match the previous call (e.g. \code{data}, \code{formula}).
+#' @param ... Other arguments passed to \code{mqgam}.
 #'
 #' @return An object of S3 class \code{quantileplot}, which supports \code{summary()}, \code{print()}, and \code{plot()} functions. The returned object has several elements.
 #' \itemize{
@@ -58,7 +58,34 @@
 #' data <- data.frame(x = x, y = y)
 #' quantileplot(y ~ s(x), data)
 
-quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL, x_break_labeller = NULL, y_break_labeller = NULL, slice_n = 7, quantiles = c(.1, .25, .5, .75, .9), quantile_notation = "label", truncation_notation = "label", uncertainty_draws = NULL, show_ci = FALSE, ci = 0.95, second_formula = NULL, x_range = NULL, y_range = NULL, xlim = NULL, ylim = NULL, x_bw = NULL, y_bw = NULL, inverse_transformation = NULL, granularity = 512, previous_fit = NULL, argGam = NULL, ...) {
+quantileplot <- function(
+  formula,
+  data,
+  weights = NULL,
+  quantiles = c(.1, .25, .5, .75, .9),
+  x_range = NULL,
+  y_range = NULL,
+  xlab = NULL,
+  ylab = NULL,
+  show_ci = FALSE,
+  ci = 0.95,
+  slice_n = 7,
+  uncertainty_draws = NULL,
+  quantile_notation = "label",
+  x_break_labeller = NULL,
+  y_break_labeller = NULL,
+  truncation_notation = "label",
+  xlim = NULL,
+  ylim = NULL,
+  x_bw = NULL,
+  y_bw = NULL,
+  inverse_transformation = NULL,
+  granularity = 512,
+  second_formula = NULL,
+  argGam = NULL,
+  previous_fit = NULL,
+  ...
+) {
 
   # Make a list of all arguments, to return at end of the function
   arguments <- list(formula = formula,

@@ -37,6 +37,8 @@ gen_curves(
 
 \item{inverse_transformation}{A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.}
 
+\item{argGam}{Additional arguments to the GAM for model fitting. Passed to mqgam.}
+
 \item{...}{Other arguments passed to \code{mqgam} for fitting of smooth quantile curves.}
 }
 \value{
@@ -46,7 +48,7 @@ A list of length 2. Element \code{curves} is a data frame containing the data fo
 Estimate smooth curves for quantiles of the outcome as a function of the predictor. This function calls \code{mqgam} from the \code{qgam} package. This function is typically called indirectly via a user call to \code{\link{quantileplot}}.
 }
 \references{
-Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. 2021. "Smooth quantile visualizations enhance understanding of bivariate population distributions." Working paper.
+Lundberg, Ian, Robin C. Lee, and Brandon M. Stewart. 2021. "The quantile plot: A visualization for bivariate population relationships." Working paper.
 
 Lundberg, Ian, and Brandon M. Stewart. 2020. "Comment: Summarizing income mobility with multiple smooth quantiles instead of parameterized means." Sociological Methodology 50(1):96-111.
 

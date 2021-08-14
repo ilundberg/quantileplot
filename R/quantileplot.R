@@ -1,6 +1,6 @@
 #' Create a Smooth Quantile Plot
 #'
-#' @description Creates a bivariate, smooth quantile plot. This is the central function of the \code{quantileplot} package. This plot visualizes estimates of the marginal density of the predictor, the conditional density of the outcome at selected values of the predictor, and smooth curves showing quantiles of the outcome as smooth functions of the predictor. This package is described in greater depth by Lee et al. (2021), which is a generalization of Lundberg and Stewart (2020). The statistical core of the package relies on the methods of Fasiolo et al. (2020).
+#' @description Creates a bivariate, smooth quantile plot. This is the central function of the \code{quantileplot} package. This plot visualizes estimates of the marginal density of the predictor, the conditional density of the outcome at selected values of the predictor, and smooth curves showing quantiles of the outcome as smooth functions of the predictor. This package is described in greater depth by Lundberg, Lee, and Stewart (2021), which is a generalization of Lundberg and Stewart (2020). The statistical core of the package relies on the methods of Fasiolo et al. (2020).
 #' @param formula A bivariate model formula (e.g. \code{y ~ s(x)})
 #' @param data Data frame containing the variables in \code{formula}. If \code{weights} are specified, they must be a column of \code{data}.
 #' @param weights String name for sampling weights, which are a column of \code{data}. If not given, a simple random sample is assumed.
@@ -45,7 +45,7 @@
 #' \item \code{arguments} is a list of all the arguments to the function, including those specified by the user and those specified by defaults.
 #' }
 #'
-#' @references Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. 2021. "Smooth quantile visualizations enhance understanding of bivariate population distributions." Working paper.
+#' @references Lundberg, Ian, Robin C. Lee, and Brandon M. Stewart. 2021. "The quantile plot: A visualization for bivariate population relationships." Working paper.
 #' @references Lundberg, Ian, and Brandon M. Stewart. 2020. "Comment: Summarizing income mobility with multiple smooth quantiles instead of parameterized means." Sociological Methodology 50(1):96-111.
 #' @references Fasiolo, Matteo, Simon N. Wood, Margaux Zaffran, Raphaël Nedellec, and Yannig Goude. 2020. "Fast calibrated additive quantile regression." Journal of the American Statistical Association.
 #'

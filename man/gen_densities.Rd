@@ -36,7 +36,7 @@ List containing \code{marginal} and \code{conditional}, each of which is a data 
 Estimate the conditional density of the outcome at at particular values of the predictor. These conditional densities appear as vertical slices in the output of \code{\link{quantileplot}}. This function is typically called indirectly via a user call to \code{\link{quantileplot}}.
 }
 \references{
-Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. 2021. "Smooth quantile visualizations enhance understanding of bivariate population distributions." Working paper.
+Lundberg, Ian, Robin C. Lee, and Brandon M. Stewart. 2021. "The quantile plot: A visualization for bivariate population relationships." Working paper.
 
 Lundberg, Ian, and Brandon M. Stewart. 2020. "Comment: Summarizing income mobility with multiple smooth quantiles instead of parameterized means." Sociological Methodology 50(1):96-111.
 

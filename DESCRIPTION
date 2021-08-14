@@ -1,5 +1,5 @@
 Package: quantileplot
-Version: 0.1.2
+Version: 0.1.3
 Date: 2021-02-25
 Title: Smooth Quantile Visualization Tool 
 Description: This package creates a bivariate smooth quantile plot. The plot visualizes estimates of the marginal density of X, the conditional density of Y given X at selected values of X, and smooth curves showing trends in quantiles of Y given X as a function of X.

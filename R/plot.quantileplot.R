@@ -5,7 +5,7 @@
 #' @param bottom_height Proportion of vertical space in the full plot to be taken up by uncertainty draws at the bottom (only relevant if the \code{quantileplot} includes uncertainty draws).
 #' @param ... Other arguments to \code{plot} commands
 #' @return Prints a plot. If the \code{quantileplot} was specified with option \code{uncertainty_draws = TRUE}, this is a \code{gtable} object with a panel of plots. If the \code{quantileplot} was specified with \code{uncertainty_draws = FALSE} (the default), this is a \code{ggplot2} object.
-#' @references Lee, Robin C., Ian Lundberg, and Brandon M. Stewart. 2021. "Smooth quantile visualizations enhance understanding of bivariate population distributions." Working paper.
+#' @references Lundberg, Ian, Robin C. Lee, and Brandon M. Stewart. 2021. "The quantile plot: A visualization for bivariate population relationships." Working paper.
 #' @references Lundberg, Ian, and Brandon M. Stewart. 2020. "Comment: Summarizing income mobility with multiple smooth quantiles instead of parameterized means." Sociological Methodology 50(1):96-111.
 #' @references Fasiolo, Matteo, Simon N. Wood, Margaux Zaffran, Raphaël Nedellec, and Yannig Goude. 2020. "Fast calibrated additive quantile regression." Journal of the American Statistical Association.
 #' @export

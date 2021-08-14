@@ -24,13 +24,12 @@ abstract: |
   of demographic examples and provide statistical software (the
   [quantileplot](https://ilundberg.github.io/quantileplot/) package for R) to support the visualization.
 author:
-- "Robin C. Lee[^1]"
-- "Ian Lundberg[^2]"
+- "Ian Lundberg[^1]"
+- "Robin C. Lee[^2]"
 - "Brandon M. Stewart[^3]"
 bibliography:
 - explainerFiles/explainer.bib
-title: "The quantileplot: A smooth quantile visualization to enhance understanding of
-  bivariate population distributions [^4]"
+title: "The quantile plot: A visualization for bivariate population relationships [^4]"
 ---
 
 
@@ -343,22 +342,22 @@ claims about the estimated quantile at a given point of the predictor.
 They do not tell us the space in which the middle 95% of complete curves
 would fall, which would be a more difficult problem.
 
-[^1]: Ph.D. Student, Department of Sociology, Princeton University,
+[^1]: Postdoctoral Scholar, Department of Sociology and California
+    Center for Population Research, UCLA, [ianlundberg.org](https://www.ianlundberg.org),
+    ianlundberg\@ucla.edu.
+
+[^2]: Ph.D. Student, Department of Sociology, Princeton University,
     [sociology.princeton.edu/people/robin-lee](https://sociology.princeton.edu/people/robin-lee),
     robinlee\@princeton.edu.
-
-[^2]: Ph.D. Candidate, Department of Sociology and Office of Population
-    Research, Princeton University, [ianlundberg.org](https://www.ianlundberg.org),
-    ilundberg\@princeton.edu.
 
 [^3]: Assistant Professor and Arthur H. Scribner Bicentennial Preceptor,
     Department of Sociology and Office of Population Research, Princeton
     University, [brandonstewart.org](http://www.brandonstewart.org), bms4\@princeton.edu.
 
-[^4]: Research reported in this publication was supported by The Eunice
-    Kennedy Shriver National Institute of Child Health & Human
-    Development of the National Institutes of Health under Award Number
-    P2CHD047879.
+[^4]: Research reported in this publication was supported by the National 
+    Science Foundation under Award Number 2104607 and by the Eunice Kennedy 
+    Shriver National Institute of Child Health \& Human Development of the 
+    National Institutes of Health under Award Number P2CHD047879 and P2CHD041022.
 
 [^5]: The marginal density also serves as a warning: in regions with low
     marginal density, the conditional density will be more uncertain.

@@ -5,7 +5,7 @@
 #' @param data Data frame containing the variables in \code{formula}. If \code{weights} are specified, they must be a column of \code{data}.
 #' @param weights String name for sampling weights, which are a column of \code{data}. If not given, a simple random sample is assumed.
 #' @param quantiles Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.
-#' @param slice_n Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 5.
+#' @param slice_n Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.
 #' @param show_ci Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.
 #' @param quantile_notation String, either \code{legend} or \code{label}. If \code{legend} (the default), then quantile curves are denoted by colors with a legend. If \code{label}, then quantile curves are annotated in the plot.
 #' @param xlab String x-axis title
@@ -65,7 +65,7 @@ quantileplot <- function(
   data,
   weights = NULL,
   quantiles = c(.1, .25, .5, .75, .9),
-  slice_n = 5,
+  slice_n = 7,
   show_ci = FALSE,
   quantile_notation = "legend",
   xlab = NULL,
@@ -385,7 +385,7 @@ quantileplot <- function(
     cat("Note that this may take time. It is computationally much harder than OLS.\n")
     gen_curves.out <- gen_curves(formula = formula,
                                  second_formula = second_formula,
-                                 data = data.mod,
+                                 data = data[data[[x_str]] >= x_data_range[1] & data[[x_str]] <= x_data_range[2],],
                                  weights = weights,
                                  quantiles = quantiles,
                                  credibility_level = credibility_level,

@@ -9,7 +9,7 @@ quantileplot(
   data,
   weights = NULL,
   quantiles = c(0.1, 0.25, 0.5, 0.75, 0.9),
-  slice_n = 5,
+  slice_n = 7,
   show_ci = FALSE,
   quantile_notation = "legend",
   xlab = NULL,
@@ -44,7 +44,7 @@ quantileplot(
 
 \item{quantiles}{Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.}
 
-\item{slice_n}{Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 5.}
+\item{slice_n}{Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.}
 
 \item{show_ci}{Logical, defaults to \code{FALSE}. Whether to show credible intervals for the estimated smooth quantile curves.}
 

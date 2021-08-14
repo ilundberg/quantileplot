@@ -328,7 +328,7 @@ quantileplot <- function(
 
   # Restrict to the predictor range of interest
   if (!is.null(x_data_range)) {
-    data.mod <- data.mod[data.mod[[x_str]] >= x_data_range[1] & data.mod[[x_str]] <= x_data_range[2],]
+    data.mod <- data.mod[data.mod$x >= x_data_range[1] & data.mod$x <= x_data_range[2],]
   }
 
   # Prepare components of the plot area.

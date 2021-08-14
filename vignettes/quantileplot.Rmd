@@ -155,6 +155,17 @@ my_plot$plot +
                      name = "\nManually customize axis breaks\nby modifying the ggplot2 object produced by quantileplot()")
 ```
 
+If you want to modify the axis limits after the fact, you need to use `coord_cartesian()` because this is how `quantileplot()` set the axis limits.
+
+```{r, results = F}
+my_plot <- quantileplot(y ~ s(x), data = sim_data, quantile_notation = "label")
+my_plot$plot +
+  coord_cartesian(xlim = c(0,2)) +
+  annotate(geom = "label", x = 1.75, y = 1,
+           label = "Extra space\nadded with\ncoord_cartesian()\nto allow more\nroom for\nannotations.",
+           size = 3)
+```
+
 ## Additional notes
 
 In some settings, estimation of quantile curves is computationally intensive. If you are modifying some aspect of the densities and want to use a cache from a previous call for the quantile curves, you can use the \code{previous_fit} argument.

@@ -70,6 +70,14 @@ my_plot$plot +
                                 "Fifth break\nat 1"),
                      name = "\nManually customize axis breaks\nby modifying the ggplot2 object produced by quantileplot()")
 
+## ---- results = F-------------------------------------------------------------
+my_plot <- quantileplot(y ~ s(x), data = sim_data, quantile_notation = "label")
+my_plot$plot +
+  coord_cartesian(xlim = c(0,2)) +
+  annotate(geom = "label", x = 1.75, y = 1,
+           label = "Extra space\nadded with\ncoord_cartesian()\nto allow more\nroom for\nannotations.",
+           size = 3)
+
 ## ---- results = "hide"--------------------------------------------------------
 quantileplot(y ~ s(x), data = sim_data, previous_fit = my_plot)
 

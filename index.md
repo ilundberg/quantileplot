@@ -2,7 +2,7 @@
 
 An R Package to visualize bivariate relationships with a quantile plot.
 
->Lee, Robin C, Ian Lundberg, and Brandon M. Stewart. "Smooth quantile visualizations enhance understanding of bivariate population distributions." [Working paper](https://ilundberg.github.io/quantileplot/doc/explainer.html).
+>Lundberg, Ian, Robin C. Lee, and Brandon M. Stewart. "The quantile plot: A visualization for bivariate population relationships." [Working paper](https://ilundberg.github.io/quantileplot/doc/explainer.html).
 
 Install this package with the command `devtools::install_github("ilundberg/quantileplot")`. Then see the [vignette](https://ilundberg.github.io/quantileplot/doc/quantileplot.html) to get started.
 

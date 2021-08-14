@@ -6,8 +6,8 @@
 #' @param weights String name for sampling weights, which are a column of \code{data}. If not given, a simple random sample is assumed.
 #' @param xlab String x-axis title
 #' @param ylab String y-axis title
-#' @param x_break_labeller Function to convert labels on x-axis breaks into an alternative format.
-#' @param y_break_labeller Function to convert labels on y-axis breaks into an alternative format.
+#' @param x_break_labeller Function to convert labels on x-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
+#' @param y_break_labeller Function to convert labels on y-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.
 #' @param slice_n Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.
 #' @param quantiles Numeric vector containing quantiles to be estimated. Values should be between 0 and 1.
 #' @param quantile_notation String, either \code{label} or \code{legend}. If \code{label} (the default), then quantile curves are annotated in the plot. If \code{legend}, then quantile curves are denoted by colors with a legend.

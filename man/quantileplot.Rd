@@ -44,9 +44,9 @@ quantileplot(
 
 \item{ylab}{String y-axis title}
 
-\item{x_break_labeller}{Function to convert labels on x-axis breaks into an alternative format.}
+\item{x_break_labeller}{Function to convert labels on x-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
 
-\item{y_break_labeller}{Function to convert labels on y-axis breaks into an alternative format.}
+\item{y_break_labeller}{Function to convert labels on y-axis breaks into an alternative format. This is a good approach if the automatic numeric labels can be converted to the labels you want with a simple function. If you want more flexibility, customize after producing the plot by modifying the resulting \code{ggplot2} object. See vignette for examples.}
 
 \item{slice_n}{Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 7.}
 

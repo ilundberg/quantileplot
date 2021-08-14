@@ -60,6 +60,16 @@ my_plot$plot +
                      name = "Custom y-axis\nbreaks and\nrotated title") +
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
 
+## ---- results = F-------------------------------------------------------------
+my_plot$plot +
+  scale_x_continuous(breaks = c(0,.25,.5,.75,1),
+                     labels = c("First break\nat 0",
+                                "Second break\nat .25",
+                                "Third break\nat .5",
+                                "Fourth break\nat .5",
+                                "Fifth break\nat 1"),
+                     name = "\nManually customize axis breaks\nby modifying the ggplot2 object produced by quantileplot()")
+
 ## ---- results = "hide"--------------------------------------------------------
 quantileplot(y ~ s(x), data = sim_data, previous_fit = my_plot)
 

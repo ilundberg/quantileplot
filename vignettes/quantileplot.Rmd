@@ -142,6 +142,19 @@ my_plot$plot +
   theme(axis.title.y = element_text(angle = 0, vjust = .5))
 ```
 
+This is a good way to customize the axis labels however you prefer.
+
+```{r, results = F}
+my_plot$plot +
+  scale_x_continuous(breaks = c(0,.25,.5,.75,1),
+                     labels = c("First break\nat 0",
+                                "Second break\nat .25",
+                                "Third break\nat .5",
+                                "Fourth break\nat .5",
+                                "Fifth break\nat 1"),
+                     name = "\nManually customize axis breaks\nby modifying the ggplot2 object produced by quantileplot()")
+```
+
 ## Additional notes
 
 In some settings, estimation of quantile curves is computationally intensive. If you are modifying some aspect of the densities and want to use a cache from a previous call for the quantile curves, you can use the \code{previous_fit} argument.

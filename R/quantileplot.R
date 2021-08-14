@@ -18,6 +18,8 @@
 #' @param second_formula Model formula to allow the learning rate to change as a function of the predictor. This is passed to \code{mqgam} as the second element in the \code{form} argument. Defaults to the same specification as \code{formula} but without the outcome variable.
 #' @param x_range Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.
 #' @param y_range Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.
+#' @param xlim Numeric vector of length 2 for custom x-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{x_range}.
+#' @param ylim Numeric vector of length 2 for custom y-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{y_range}.
 #' @param x_bw Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
 #' @param y_bw Numeric bandwidth for density estimation in the \code{y} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.
 #' @param inverse_transformation A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.
@@ -56,7 +58,7 @@
 #' data <- data.frame(x = x, y = y)
 #' quantileplot(y ~ s(x), data)
 
-quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL, x_break_labeller = NULL, y_break_labeller = NULL, slice_n = 7, quantiles = c(.1, .25, .5, .75, .9), quantile_notation = "label", truncation_notation = "label", uncertainty_draws = NULL, show_ci = FALSE, ci = 0.95, second_formula = NULL, x_range = NULL, y_range = NULL, x_bw = NULL, y_bw = NULL, inverse_transformation = NULL, granularity = 512, previous_fit = NULL, argGam = NULL, ...) {
+quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL, x_break_labeller = NULL, y_break_labeller = NULL, slice_n = 7, quantiles = c(.1, .25, .5, .75, .9), quantile_notation = "label", truncation_notation = "label", uncertainty_draws = NULL, show_ci = FALSE, ci = 0.95, second_formula = NULL, x_range = NULL, y_range = NULL, xlim = NULL, ylim = NULL, x_bw = NULL, y_bw = NULL, inverse_transformation = NULL, granularity = 512, previous_fit = NULL, argGam = NULL, ...) {
 
   # Make a list of all arguments, to return at end of the function
   arguments <- list(formula = formula,
@@ -76,6 +78,8 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
                     second_formula = second_formula,
                     x_range = x_range,
                     y_range = y_range,
+                    xlim = xlim,
+                    ylim = ylim,
                     x_bw = x_bw,
                     y_bw = y_bw,
                     inverse_transformation = inverse_transformation,
@@ -436,6 +440,23 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
   # PRODUCE THE PLOT #
   ####################
 
+  # Determine the axis range to be plotted, or use the user-specified range
+  if (!is.null(xlim)) {
+    # Use user-specified if provided
+    x_range_for_plot <- xlim
+  } else if (quantile_notation == "legend") {
+    # Else, use range of x if we have a legend
+    x_range_for_plot <- x_range
+  } else {
+    # Else, expand the range to make room for the labels
+    x_range_for_plot <- x_range + c(0,.25 * diff(x_range))
+  }
+  if (is.null(ylim)) {
+    y_range_for_plot <- c(y_range_with_breaks[[1]] - y_offset - y_bottom_padding, y_range_with_breaks[[2]])
+  } else {
+    y_range_for_plot <- ylim
+  }
+
   p <- ggplot2::ggplot() +
     # Conditional densities (vertical slices)
     ggplot2::geom_polygon(data = conditional,
@@ -464,8 +485,8 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
                                 labels = y_break_labeller) +
     # Define the axis limits
     ggplot2::coord_cartesian(
-      xlim = x_range,
-      ylim = c(y_range_with_breaks[[1]] - y_offset - y_bottom_padding, y_range_with_breaks[[2]]),
+      xlim = x_range_for_plot,
+      ylim = y_range_for_plot,
       expand = TRUE,
       default = FALSE,
       clip = "on"
@@ -509,8 +530,8 @@ quantileplot <- function(formula, data, weights = NULL, xlab = NULL, ylab = NULL
         ggplot2::coord_cartesian(
           # If the user specified the x_range, use that range.
           # Otherwise expand the range to make space for the annotations.
-          xlim = x_range_modified,
-          ylim = c(y_range_with_breaks[[1]] - y_offset - y_bottom_padding, y_range_with_breaks[[2]]),
+          xlim = x_range_for_plot,
+          ylim = y_range_for_plot,
           expand = TRUE,
           default = FALSE,
           clip = "on"

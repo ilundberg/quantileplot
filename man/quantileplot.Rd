@@ -22,6 +22,8 @@ quantileplot(
   second_formula = NULL,
   x_range = NULL,
   y_range = NULL,
+  xlim = NULL,
+  ylim = NULL,
   x_bw = NULL,
   y_bw = NULL,
   inverse_transformation = NULL,
@@ -65,6 +67,10 @@ quantileplot(
 \item{x_range}{Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.}
 
 \item{y_range}{Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.}
+
+\item{xlim}{Numeric vector of length 2 for custom x-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{x_range}.}
+
+\item{ylim}{Numeric vector of length 2 for custom y-axis limits. This affects the plotting area but does not affect the data analyzed or displayed. To truncate the data, use \code{y_range}.}
 
 \item{x_bw}{Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.}
 

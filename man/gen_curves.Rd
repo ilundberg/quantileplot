@@ -2,11 +2,10 @@
 % Please edit documentation in R/gen_curves.R
 \name{gen_curves}
 \alias{gen_curves}
-\title{Generate Smooth Curves for a \code{quantileplot}}
+\title{Generate Quantile Curves for a \code{quantileplot}}
 \usage{
 gen_curves(
   formula,
-  second_formula,
   data,
   weights = NULL,
   quantiles = c(0.1, 0.25, 0.5, 0.75, 0.9),
@@ -14,14 +13,13 @@ gen_curves(
   credibility_level = 0.95,
   uncertainty_draws = 10,
   inverse_transformation = NULL,
+  second_formula,
   argGam = NULL,
   ...
 )
 }
 \arguments{
-\item{formula}{A bivariate model formula (e.g. \code{y ~ x})}
-
-\item{second_formula}{Model formula to allow the learning rate to change as a function of the predictor. This is passed to \code{mqgam} as the second element in the \code{form} argument. Defaults to the same specification as \code{formula} but without the outcome variable.}
+\item{formula}{A bivariate model formula (e.g. \code{y ~ s(x)})}
 
 \item{data}{Data frame containing the variables in \code{formula}. If \code{weights} are specified, they must be a column of \code{data}.}
 
@@ -33,13 +31,15 @@ gen_curves(
 
 \item{credibility_level}{Numeric probability value for credible intervals; default to 0.95 to produce 95 percent credible intervals. Only relevant if \code{show_ci = TRUE}.}
 
-\item{uncertainty_draws}{Numeric. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.}
+\item{uncertainty_draws}{A whole number. If non-null, the number of simulated posterior draws to estimate for each smooth quantile curve. When used with the \code{plot} function, these appear in panels below the main plot.}
 
-\item{inverse_transformation}{A function of an argument named x. This is only used if the argument passed to formula involves a transformation of the outcome variable (e.g. log(y + 1)), then you need to provide the inverse of that transformation so that the returned plot can be visualized on the original scale of the outcome variable. For common transformations (e.g. log(y)), this argument can be determined automatically. To produce a plot with the predictor or outcome visualized on a transformed scale, you should not place the transformation within the model formula but instead should create your transformed variable in the data before calling the quantileplot function.}
+\item{inverse_transformation}{A function of a scalar argument. Only used in the rare use case where the outcome has an extremely skewed distribution and the user wants to estimate the quantile curves on a transformed outcome, to be brought back to the original scale for the visualization. In that case, this argument is the function to convert from the transformed outcome back to the original scale. For instance, if the outcome in the model formula is \code{log(y + 1)} then the inverse transformation should be \code{function(y) exp(y) - 1}. This is a rare use case because it is only relevant when a transformation of the outcome aids the estimation of quantile curves. If you want to visualize on a transformed scale, you should instead create a transformed variable in \code{data} rather than conducting the transformation within the model formula. For common transformations (e.g. log(y)), the \code{inverse_transformation} argument can left \code{NULL} and will be determined automatically.}
+
+\item{second_formula}{Model formula to allow the learning rate to change as a function of the predictor. This is passed to \code{mqgam} as the second element in the \code{form} argument. Defaults to the same specification as \code{formula} but without the outcome variable.}
 
 \item{argGam}{Additional arguments to the GAM for model fitting. Passed to mqgam.}
 
-\item{...}{Other arguments passed to \code{mqgam} for fitting of smooth quantile curves.}
+\item{...}{Other arguments passed to \code{mqgam}.}
 }
 \value{
 A list of length 2. Element \code{curves} is a data frame containing the data for plotting smooth curves for quantiles of the outcome given the predictor. Element \code{mqgam.out} is the fitted object from \code{mqgam}.

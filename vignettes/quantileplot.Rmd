@@ -87,6 +87,15 @@ quantileplot(y ~ s(x), data = sim_data, uncertainty_draws = 10)
 
 Importantly, these curves are not like a confidence interval. They do not show the user a range such that the truth would fall in that range with some probability. Instead, they are useful to convey to the viewer the more basic idea that the estimated curve is only our best guess for a curve that is statistically uncertain.
 
+# Visualizing the raw data
+
+After creating a `quantileplot` object, you can convert that object into an analogous scatter plot to visualize the raw data. If desired in a large sample, you can use the `fraction` argument to plot some random fraction of the raw data.
+
+```{r, results = F, fig.height = 5}
+qp <- quantileplot(y ~ s(x), data = sim_data)
+scatter.quantileplot(qp, fraction = .5)
+```
+
 # Customizing the visualization
 
 There are two ways to customize the plot: with arguments and by manually modifying the resulting `ggplot2` object.

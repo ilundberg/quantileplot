@@ -23,6 +23,10 @@ quantileplot(y ~ s(x), data = sim_data, show_ci = T)
 ## ---- results = F, fig.height = 5---------------------------------------------
 quantileplot(y ~ s(x), data = sim_data, uncertainty_draws = 10)
 
+## ---- results = F, fig.height = 5---------------------------------------------
+qp <- quantileplot(y ~ s(x), data = sim_data)
+scatter.quantileplot(qp, fraction = .5)
+
 ## ---- results = F-------------------------------------------------------------
 quantileplot(
   y ~ s(x), 

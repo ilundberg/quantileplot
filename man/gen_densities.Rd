@@ -17,11 +17,11 @@ gen_densities(
 \arguments{
 \item{data}{Data frame containing columns \code{x}, \code{y}, and \code{weight}. For a simple random sample, set \code{weight} to be constant.}
 
-\item{slice_n}{Integer number of conditional densities to be plotted for \code{y} given \code{x}. These appear in the visualization as vertical slices. Default is 7.}
+\item{slice_n}{Integer number of vertical slices (conditional densities of y given x) to be plotted. Default is 5.}
 
-\item{x_data_range}{Numeric vector of length 2 containing the range of x-axis to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed.}
+\item{x_data_range}{Numeric vector of length 2 containing the range of horizontal values to be plotted. Defaults to the range of the predictor variable in \code{data}. You may want to specify a narrower range if the predictor is extremely skewed. Quantile curves and densities will be estimated only on data in this range, and the plot will note the percent truncated.}
 
-\item{y_data_range}{Numeric vector of length 2 containing the range of y-axis to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed.}
+\item{y_data_range}{Numeric vector of length 2 containing the range of vertical values to be plotted. Defaults to the range of the outcome variable in \code{data}. You may want to specify a narrower range if the outcome is extremely skewed. Densities are truncated to this range. All data contribute to quantile curve estimation regardless of \code{y_data_range} to avoid selection on the outcome, though the visualization is truncated to \code{y_data_range}. The plot will note the percent truncated.}
 
 \item{x_bw}{Numeric bandwidth for density estimation in the \code{x} dimension. The standard deviation of a Gaussian kernel. If \code{NULL}, this is set by the defaults in \code{stats::density()}.}
 

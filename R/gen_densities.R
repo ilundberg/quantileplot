@@ -58,7 +58,10 @@ gen_densities <- function(data, slice_n = 7, x_data_range = NULL, y_data_range =
   marginal_x_seq <- seq(x_data_range[1], x_data_range[2], length.out = granularity + 2)[2:(granularity + 1)]
   # Use labeling::extended to select slice locations to match the vertical major grid lines
   grid_line_locations <- labeling::extended(x_data_range[1], x_data_range[2], slice_n + 2)
-  if (length(grid_line_locations) == slice_n + 2) {
+  # If that produced the correct number and the far right one has enough room before the
+  # edge of the plot, then use those values
+  if (length(grid_line_locations) == slice_n + 2 &
+      x_data_range[2] - max(grid_line_locations) >= diff(grid_line_locations)[1]) {
     conditional_x_seq <- grid_line_locations[2:(slice_n + 1)]
   } else {
     # Sometimes labeling::extended chooses a different number of points to help with label making.

@@ -148,6 +148,16 @@ quantileplot <- function(
   if (!is.data.frame(data)) {
     stop("Argument error: data should be a data frame")
   }
+  if (!is.null(x_breaks)) {
+    if (!is.numeric(x_breaks)) {
+      stop("Argument error: x_breaks should be a numeric vector. Perhaps you want x_labels?")
+    }
+  }
+  if (!is.null(y_breaks)) {
+    if (!is.numeric(y_breaks)) {
+      stop("Argument error: y_breaks should be a numeric vector. Perhaps you want y_labels?")
+    }
+  }
   if (!is.function(x_labels) & class(x_labels) != "waiver") {
     if (!is.numeric(x_labels) & !is.character(x_labels)) {
       stop("Argument error: If x_labels is not a function, then it should be a numeric or character vector")

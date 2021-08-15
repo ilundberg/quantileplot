@@ -192,6 +192,16 @@ quantileplot <- function(
       stop("Argument error: The weights that you specified need to be a column of data.")
     }
   }
+  if (!is.null(xlab)) {
+    if (!is.character(xlab) & !is.numeric(xlab)) {
+      stop("Argument error: xlab should be a string axis title")
+    }
+  }
+  if (!is.null(ylab)) {
+    if (!is.character(ylab) & !is.numeric(ylab)) {
+      stop("Argument error: ylab should be a string axis title")
+    }
+  }
   if (!is.numeric(slice_n) | length(slice_n) != 1) {
     stop("Argument error: slice_n should be a whole number")
   }
@@ -262,13 +272,26 @@ quantileplot <- function(
       stop("Argument error: y_bw should be a numeric scalar")
     }
   }
+  if (!is.null(inverse_transformation)) {
+    if (!is.function(inverse_transformation)) {
+      stop("Argument error: inverse_transformation should be a function")
+    }
+  }
   if (!is.numeric(granularity) | length(granularity) != 1) {
     stop("Argument error: granularity should be a whole number scalar")
   }
   if (abs(round(granularity) - granularity) > .00001) {
     stop("Argument error: granularity should be a whole number")
   }
+  if (!is.null(argGam)) {
+    if(!is.list(argGam)) {
+      stop("Argument error: If argGam is provided, it should be a list of arguments to pass along to mgcv::gam")
+    }
+  }
   if (!is.null(previous_fit)) {
+    if (class(previous_fit) != "quantileplot") {
+      stop("Argument error: If previous_fit is supplied, it must be an object of class quantileplot")
+    }
     if (!all(dim(previous_fit$arguments$data) == dim(data))) {
       stop("Argument error: The supplied data argument is of a different size from the data in the supplied previous_fit")
     }

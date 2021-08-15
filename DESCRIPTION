@@ -25,5 +25,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Suggests: 
     rmarkdown,
-    knitr
+    knitr,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
+Config/testthat/edition: 3

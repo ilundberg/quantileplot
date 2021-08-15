@@ -29,3 +29,5 @@ Suggests:
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+URL: https://ilundberg.github.io/quantileplot/
+BugReports: https://github.com/ilundberg/quantileplot/issues

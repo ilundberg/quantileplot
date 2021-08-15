@@ -1,10 +1,12 @@
 Package: quantileplot
 Version: 0.1.4
-Date: 2021-02-25
-Title: Smooth Quantile Visualization Tool 
-Description: This package creates a bivariate smooth quantile plot. The plot visualizes estimates of the marginal density of X, the conditional density of Y given X at selected values of X, and smooth curves showing trends in quantiles of Y given X as a function of X.
-Author: Robin C. Lee, Ian Lundberg, Brandon M. Stewart
-Maintainer: Robin C. Lee <robinlee@princeton.edu>
+Date: 2021-08-15
+Title: A Visualization Package for the Quantile Plot
+Description: This package creates a bivariate quantile plot. The plot visualizes estimates of the marginal density of X, the conditional density of Y given X at selected values of X, and smooth curves showing trends in quantiles of Y given X as a function of X.
+Authors@R:
+    c(person("Ian", "Lundberg", email = "ianlundberg@ucla.edu", role = c("aut", "cre")),
+      person("Robin", "Lee", role = "aut"),
+      person("Brandon", "Stewart", role = "aut"))
 RoxygenNote: 7.1.1
 Imports:
     dplyr,

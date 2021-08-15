@@ -2,3 +2,9 @@
 ^\.Rproj\.user$
 ^doc$
 ^Meta$
+^index\.md$
+^example\.png$
+^_config\.yml$
+^cran-comments\.md$
+^README\.md$
+^LICENSE\.md$

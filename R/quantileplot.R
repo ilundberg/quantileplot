@@ -178,6 +178,30 @@ quantileplot <- function(
   if (!(x_str %in% colnames(data))) {
     stop("Argument error: The predictor specified in formula needs to be a column of data.")
   }
+  if (length(class(data[[x_str]])) == 1) {
+    if (class(data[[x_str]]) != "numeric") {
+      stop("Argument error: The predictor specified in formula needs to be numeric.")
+    }
+  } else {
+    if (any(class(data[[x_str]]) %in% c("double","numeric"))) {
+      warning("Coercing the predictor variable to be numeric")
+      data[[x_str]] <- as.numeric(data[[x_str]])
+    } else {
+      stop("Argument error: The predictor specified in formula needs to be numeric.")
+    }
+  }
+  if (length(class(data[[y_str]])) == 1) {
+    if (class(data[[y_str]]) != "numeric") {
+      stop("Argument error: The outcome specified in formula needs to be numeric.")
+    }
+  } else {
+    if (any(class(data[[y_str]]) %in% c("double","numeric"))) {
+      warning("Coercing the outcome variable to be numeric")
+      data[[y_str]] <- as.numeric(data[[y_str]])
+    } else {
+      stop("Argument error: The outcome specified in formula needs to be numeric.")
+    }
+  }
   if (!(y_str %in% colnames(data))) {
     stop("Argument error: The outcome specified in formula needs to be a column of data.")
   }
@@ -502,21 +526,21 @@ quantileplot <- function(
     dplyr::mutate(estimate = case_when(estimate >= y_data_range[1] & estimate <= y_data_range[2] ~ estimate),
                   ci.min = dplyr::case_when(
                     # If ci.min is in range, use ci.min
-                    ci.min >= y_data_range[1] & ci.min <= y_data_range[2] ~ ci.min,
+                    ci.min >= y_data_range[1] & ci.min <= y_data_range[2] ~ as.numeric(ci.min),
                     # If ci.min is below the range but ci.max is in range, use the bottom of the range for ci.min.
                     # This causes the confidence band to plot right up to the bottom of the visualization range.
-                    ci.min < y_data_range[1] & ci.max >= y_data_range[1] & ci.max <= y_data_range[2] ~ y_data_range[1],
+                    ci.min < y_data_range[1] & ci.max >= y_data_range[1] & ci.max <= y_data_range[2] ~ as.numeric(y_data_range[1]),
                     # If the band is the full range, use the full range
-                    ci.min < y_data_range[1] & ci.max > y_data_range[2] ~ y_data_range[1]
+                    ci.min < y_data_range[1] & ci.max > y_data_range[2] ~ as.numeric(y_data_range[1])
                   ),
                   ci.max = dplyr::case_when(
                     # If ci.max is in range, use ci.max
-                    ci.max >= y_data_range[1] & ci.max <= y_data_range[2] ~ ci.max,
+                    ci.max >= y_data_range[1] & ci.max <= y_data_range[2] ~ as.numeric(ci.max),
                     # If ci.max is above the range but ci.min is in range, use the top of the range for ci.max
                     # This causes the confidence band to plot right up to the top of the visualization range.
-                    ci.max > y_data_range[2] & ci.min >= y_data_range[1] & ci.min <= y_data_range[2] ~ y_data_range[2],
+                    ci.max > y_data_range[2] & ci.min >= y_data_range[1] & ci.min <= y_data_range[2] ~ as.numeric(y_data_range[2]),
                     # If the band is the full range, use the full range
-                    ci.min < y_data_range[1] & ci.max > y_data_range[2] ~ y_data_range[2]
+                    ci.min < y_data_range[1] & ci.max > y_data_range[2] ~ as.numeric(y_data_range[2])
                   ))
 
   ####################
@@ -614,15 +638,15 @@ quantileplot <- function(
                   label = case_when(any == 0 ~ "",
                                     T ~ paste0(label_no_pct,": ",pretty_pct(pct)))) %>%
     # Determine the x position of the annotation
-    dplyr::mutate(x_position = dplyr::case_when(variable == "x" & end == "low" ~ x_data_range[1],
-                                                variable == "x" & end == "high" ~ x_data_range[2],
-                                                variable == "y" & end == "low" ~ mean(x_data_range),
-                                                variable == "y" & end == "high" ~ mean(x_data_range))) %>%
+    dplyr::mutate(x_position = dplyr::case_when(variable == "x" & end == "low" ~ as.numeric(x_data_range[1]),
+                                                variable == "x" & end == "high" ~ as.numeric(x_data_range[2]),
+                                                variable == "y" & end == "low" ~ as.numeric(mean(x_data_range)),
+                                                variable == "y" & end == "high" ~ as.numeric(mean(x_data_range)))) %>%
     # Determine the y position of the annotation
-    dplyr::mutate(y_position = dplyr::case_when(variable == "x" & end == "low" ~ mean(y_data_range),
-                                                variable == "x" & end == "high" ~ mean(y_data_range),
-                                                variable == "y" & end == "low" ~ y_data_range[1],
-                                                variable == "y" & end == "high" ~ y_data_range[2])) %>%
+    dplyr::mutate(y_position = dplyr::case_when(variable == "x" & end == "low" ~ as.numeric(mean(y_data_range)),
+                                                variable == "x" & end == "high" ~ as.numeric(mean(y_data_range)),
+                                                variable == "y" & end == "low" ~ as.numeric(y_data_range[1]),
+                                                variable == "y" & end == "high" ~ as.numeric(y_data_range[2]))) %>%
     # Determine the angle of the annotation
     dplyr::mutate(angle = dplyr::case_when(variable == "x" ~ 90,
                                            variable == "y" ~ 0)) %>%
